@@ -1,0 +1,155 @@
+openapi: 3.0.3
+info:
+  title: Free Shelf - OpenAPI 3.0
+  description: |-
+    Free Shelf API Spec
+  version: 0.0.1
+  contact:
+    name: API Support
+    email: work.mitakshar@gmail.com
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Free Shelf api  v1
+    description: Free Shelf - Online Free Storage Rental Service
+paths:
+  /v1/auth/signup:
+    post:
+      tags:
+        - auth controller v1
+      summary: Sign-Up/Register
+      description: Sign up/Register New User
+      operationId: signUp
+      requestBody:
+        description: Sign Up Request
+        content:
+          application/json:
+            schema:
+              $ref: './UserMgmtApiComponents.yaml#/components/schemas/SignUpRequest'
+        required: true
+      responses:
+        '201':
+          description: "Sign Up Success"
+          content:
+            application/json:
+              schema:
+                $ref: './UserMgmtApiComponents.yaml#/components/schemas/AuthResponse'
+        '422':
+          description: "Signup Request is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserMgmtBaseApiResponse'
+        '400':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserMgmtBaseApiResponse'
+
+  /v1/auth/signin:
+    post:
+      tags:
+        - auth controller v1
+      summary: Sign-In
+      description: Sign-In
+      operationId: signIn
+      requestBody:
+        description: Sign In Request
+        content:
+          application/json:
+            schema:
+              $ref: './UserMgmtApiComponents.yaml#/components/schemas/SignInRequest'
+        required: true
+      responses:
+        '200':
+          description: "Sign In Success"
+          content:
+            application/json:
+              schema:
+                $ref: './UserMgmtApiComponents.yaml#/components/schemas/AuthResponse'
+        '422':
+          description: "Signup Request is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserMgmtBaseApiResponse'
+        '401':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserMgmtBaseApiResponse'
+
+  /v1/user:
+    put:
+      tags:
+        - user controller v1
+      summary:  Update Profile
+      description: Update Profile
+      operationId: updateUser
+      parameters:
+        - in: header
+          name: "Authorization"
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: Update Profile Request
+        content:
+          application/json:
+            schema:
+              $ref: './UserMgmtApiComponents.yaml#/components/schemas/UpdateProfileRequest'
+        required: true
+      responses:
+        '200':
+          description: "Update Profile Success"
+          content:
+            application/json:
+              schema:
+                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserMgmtBaseApiResponse'
+        '422':
+          description: "Signup Request is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserMgmtBaseApiResponse'
+        '401':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserMgmtBaseApiResponse'
+    get:
+      tags:
+        - user controller v1
+      summary: Get User Profile
+      description: Get User Profile
+      operationId: getUser
+      parameters:
+        - in: header
+          name: "Authorization"
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: "Get Profile Success"
+          content:
+            application/json:
+              schema:
+                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserProfileResponse'
+        '422':
+          description: "Get Profile Request is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserMgmtBaseApiResponse'
+        '401':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserMgmtBaseApiResponse'
+
+

@@ -1,0 +1,660 @@
+components:
+  schemas:
+    # ************************ Common Api Responses ******************
+    BaseApiResponse:
+      type: object
+      discriminator:
+        propertyName: respType
+
+    FreeShelfApiBaseApiResponse:
+      type: object
+      properties:
+      allOf:
+        - $ref: '#/components/schemas/BaseApiResponse'
+
+    # ************************ User Api Responses ******************
+
+    AuthResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: '#/components/schemas/AuthResponseDto'
+      allOf:
+        - $ref: '#/components/schemas/FreeShelfApiBaseApiResponse'
+
+    ActivationResponse:
+      type: object
+      properties:
+      allOf:
+        - $ref: '#/components/schemas/FreeShelfApiBaseApiResponse'
+
+
+    ResetPasswordResponse:
+      type: object
+      properties:
+      allOf:
+        - $ref: "#/components/schemas/FreeShelfApiBaseApiResponse"
+
+
+    # ********************** User Api Requests ********************
+
+    SignUpRequest:
+      type: object
+      required:
+        - email
+        - password
+        - username
+      properties:
+        username:
+          type: string
+          description: First name of the user.
+        firstName:
+          type: string
+        lastName:
+          type: string
+        role:
+          type: string
+          enum: [HOST, RENTER, ADMIN]
+        password:
+          type: string
+          description: User's password.
+        email:
+          type: string
+          format: email
+          description: User's email address.
+
+
+    SignInRequest:
+      type: object
+      required:
+        -email
+        -password
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    ActivationRequest:
+      type: object
+      required:
+        - activationCode
+      properties:
+        activationCode:
+          type: string
+
+    CreateRoleRequest:
+      type: object
+      required:
+        - role
+      properties:
+        role:
+          type: string
+
+    AssignRoleRequest:
+      type: object
+      properties:
+        roles:
+          type: array
+          items:
+            type: string
+
+    # *************** User Service DTO's **************
+    AuthResponseDto:
+      type: object
+      required:
+        -jwt
+      properties:
+        token:
+          type: string
+        userName:
+          type: string
+        provider:
+          type: string
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        bio:
+          type: string
+        profileImageUrl:
+          type: string
+
+    UserProfileResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: '#/components/schemas/UserDto'
+      allOf:
+        - $ref: "#/components/schemas/FreeShelfApiBaseApiResponse"
+
+    UserDto:
+      type: object
+      required:
+        - firstName
+        - email
+        - userName
+        - password
+        - status
+        - role
+        - provider
+      properties:
+        firstName:
+          type: string
+          maxLength: 50
+          description: User's first name
+        lastName:
+          type: string
+          maxLength: 50
+          description: User's last name
+        email:
+          type: string
+          format: email
+          description: User's email address (must be unique)
+        userName:
+          type: string
+          description: User's username (must be unique)
+        phoneNumber:
+          type: string
+          maxLength: 15
+          description: User's phone number
+        status:
+          type: string
+          enum: [PENDING, ACTIVE, SUSPENDED, DEACTIVATED]
+          default: PENDING
+          description: Current status of the user account
+        role:
+          type: string
+          enum: [HOST, RENTER, ADMIN]
+          description: Role assigned to the user
+        profile:
+          $ref: '#/components/schemas/UserProfileDto'
+          description: User's detailed profile information
+        lastLoginAt:
+          type: string
+          format: local-date-time
+          description: Timestamp of user's last login
+        accountVerified:
+          type: boolean
+          default: false
+          description: Indicates if the user account has been verified
+        provider:
+          type: string
+          enum: [LOCAL, GOOGLE]
+          default: LOCAL
+          description: Authentication provider used by the user
+        providerId:
+          type: string
+          description: External ID from the authentication provider
+
+    UserProfileDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+          description: Unique identifier for the profile
+        bio:
+          type: string
+          maxLength: 1000
+          description: User's biography or about section
+        profileImageUrl:
+          type: string
+          description: URL to the user's profile image
+        addresses:
+          type: array
+          items:
+           $ref: '#/components/schemas/AddressDto'
+          description: User's address information
+
+    AddressDto:
+      type: object
+      properties:
+        id:
+          type: long
+        addressLine1:
+          type: string
+          maxLength: 100
+        addressLine2:
+          type: string
+          maxLength: 100
+        street:
+          type: string
+          maxLength: 100
+          description: Street address
+        city:
+          type: string
+          maxLength: 50
+          description: City
+        state:
+          type: string
+          maxLength: 50
+          description: State or province
+        zipCode:
+          type: string
+          maxLength: 10
+          description: Postal or zip code
+        country:
+          type: string
+          maxLength: 50
+          description: Country
+        latitude:
+          type: number
+          format: big-decimal
+          description: Latitude coordinate
+        longitude:
+          type: number
+          format: big-decimal
+          description: Longitude coordinate
+
+    AddNewAddressRequest:
+      type: object
+      properties:
+        addressLine1:
+          type: string
+          maxLength: 100
+        addressLine2:
+          type: string
+          maxLength: 100
+        street:
+          type: string
+          maxLength: 100
+          description: Street address
+        city:
+          type: string
+          maxLength: 50
+          description: City
+        state:
+          type: string
+          maxLength: 50
+          description: State or province
+        zipCode:
+          type: string
+          maxLength: 10
+          description: Postal or zip code
+        country:
+          type: string
+          maxLength: 50
+          description: Country
+
+    EditAddressRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: long
+        addressLine1:
+          type: string
+          maxLength: 100
+        addressLine2:
+          type: string
+          maxLength: 100
+        street:
+          type: string
+          maxLength: 100
+          description: Street address
+        city:
+          type: string
+          maxLength: 50
+          description: City
+        state:
+          type: string
+          maxLength: 50
+          description: State or province
+        zipCode:
+          type: string
+          maxLength: 10
+          description: Postal or zip code
+        country:
+          type: string
+          maxLength: 50
+          description: Country
+
+    AddressResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/AddressDto'
+      allOf:
+        - $ref: '#/components/schemas/FreeShelfApiBaseApiResponse'
+
+    CreateStorageSpaceRequest:
+      type: object
+      description: Request body for creating a new storage space
+      required:
+        - hostId
+        - title
+        - description
+        - pricePerMonth
+        - sizeInSquareFeet
+        - spaceType
+        - addressId
+      properties:
+        title:
+          type: string
+          maxLength: 100
+          description: Title of the storage space listing
+        description:
+          type: string
+          maxLength: 2000
+          description: Detailed description of the storage space
+        pricePerMonth:
+          type: number
+          format: double
+          minimum: 0
+          description: Monthly rental price for the storage space
+        sizeInSquareFeet:
+          type: number
+          format: double
+          minimum: 0
+          description: Size of the storage space in square feet
+        spaceType:
+          type: string
+          enum: [GARAGE, BASEMENT, ATTIC, STORAGE_UNIT, ROOM, SHED, OTHER]
+          description: Type of storage space
+        addressId:
+          type: integer
+          format: int64
+          description: ID of the address associated with the storage space
+        features:
+          type: array
+          items:
+            type: string
+            enum: [ CLIMATE_CONTROLLED, SECURITY_CAMERA, TWENTY_FOUR_HOUR_ACCESS, DRIVE_UP_ACCESS, INDOOR, OUTDOOR, LOCKED, SHELVING, ELECTRICITY, LIGHTING, ALARM_SYSTEM]
+          description: List of features available in the storage space
+
+    StorageSpaceDto:
+      type: object
+      description: Represents a storage space listing
+      required:
+        - id
+        - hostId
+        - title
+        - description
+        - pricePerMonth
+        - sizeInSquareFeet
+        - spaceType
+        - status
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the storage space
+        hostId:
+          type: integer
+          format: int64
+          description: ID of the user hosting the storage space
+        title:
+          type: string
+          maxLength: 100
+          description: Title of the storage space listing
+        description:
+          type: string
+          maxLength: 2000
+          description: Detailed description of the storage space
+        pricePerMonth:
+          type: number
+          format: double
+          minimum: 0
+          description: Monthly rental price for the storage space
+        sizeInSquareFeet:
+          type: number
+          format: double
+          minimum: 0
+          description: Size of the storage space in square feet
+        spaceType:
+          type: string
+          enum: [GARAGE, BASEMENT, ATTIC, STORAGE_UNIT, ROOM, SHED, OTHER]
+          description: Type of storage space
+        status:
+          type: string
+          enum:
+            - DRAFT
+            - ACTIVE
+            - INACTIVE
+            - BOOKED
+            - DELETED
+          description: Current status of the storage space
+        address:
+          $ref: '#/components/schemas/AddressDto'
+        features:
+          type: array
+          items:
+            type: string
+            enum: [ CLIMATE_CONTROLLED, SECURITY_CAMERA, TWENTY_FOUR_HOUR_ACCESS, DRIVE_UP_ACCESS, INDOOR, OUTDOOR, LOCKED, SHELVING, ELECTRICITY, LIGHTING, ALARM_SYSTEM]
+          description: List of features available in the storage space
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpaceImageDto'
+          description: List of images associated with the storage space
+        availabilityPeriods:
+          type: array
+          items:
+            $ref: '#/components/schemas/AvailabilityPeriodDto'
+          description: List of availability periods for the storage space
+        ratings:
+          type: array
+          items:
+            $ref: '#/components/schemas/RatingDto'
+          description: List of ratings for the storage space
+        createdAt:
+          type: string
+          format: local-date-time
+          description: Timestamp when the storage space was created
+        updatedAt:
+          type: string
+          format: local-date-time
+          description: Timestamp when the storage space was last updated
+        version:
+          type: integer
+          format: int32
+          description: Version number for optimistic locking
+
+    SpaceImageDto:
+      type: object
+      description: Represents an image associated with a storage space
+      properties:
+        id:
+          type: integer
+          format: int64
+        spaceId:
+          type: integer
+          format: int64
+          description: ID of the associated storage space
+        imageUrl:
+          type: string
+          description: URL of the image
+        caption:
+          type: string
+          maxLength: 200
+          description: Optional caption for the image
+        primary:
+          type: boolean
+          description: Indicates if this is the primary image
+        version:
+          type: integer
+          format: int32
+          description: Version number for optimistic locking
+
+    AvailabilityPeriodDto:
+      type: object
+      description: Represents a period when a storage space is available
+      required:
+        - id
+        - spaceId
+        - startDate
+        - endDate
+      properties:
+        spaceId:
+          type: integer
+          format: int64
+          description: ID of the associated storage space
+        startDate:
+          type: string
+          format: local-date-time
+          description: Start date and time of availability
+        endDate:
+          type: string
+          format: local-date-time
+          description: End date and time of availability
+        version:
+          type: integer
+          format: int32
+          description: Version number for optimistic locking
+
+    RatingDto:
+      type: object
+      description: Represents a rating for a storage space
+      required:
+        - id
+        - userId
+        - spaceId
+        - overallScore
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the rating
+        userId:
+          type: integer
+          format: int64
+          description: ID of the user who provided the rating
+        spaceId:
+          type: integer
+          format: int64
+          description: ID of the associated storage space
+        overallScore:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Overall rating score (1-5)
+        cleanlinessScore:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Rating for cleanliness (1-5)
+        securityScore:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Rating for security (1-5)
+        accessibilityScore:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Rating for accessibility (1-5)
+        valueScore:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Rating for value (1-5)
+        accuracyScore:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Rating for accuracy (1-5)
+        createdAt:
+          type: string
+          format: local-date-time
+          description: Timestamp when the rating was created
+        updatedAt:
+          type: string
+          format: local-date-time
+          description: Timestamp when the rating was last updated
+        version:
+          type: integer
+          format: int32
+          description: Version number for optimistic locking
+
+    ReviewDto:
+      type: object
+      description: Represents a review for a storage space
+      required:
+        - id
+        - authorId
+        - spaceId
+        - ratingId
+        - approved
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the review
+        authorId:
+          type: integer
+          format: int64
+          description: ID of the user who wrote the review
+        spaceId:
+          type: integer
+          format: int64
+          description: ID of the associated storage space
+        ratingId:
+          type: integer
+          format: int64
+          description: ID of the associated rating
+        comment:
+          type: string
+          maxLength: 1000
+          description: Review comment
+        approved:
+          type: boolean
+          description: Indicates if the review has been approved
+        createdAt:
+          type: string
+          format: local-date-time
+          description: Timestamp when the review was created
+        updatedAt:
+          type: string
+          format: local-date-time
+          description: Timestamp when the review was last updated
+        version:
+          type: integer
+          format: int32
+          description: Version number for optimistic locking
+
+    StorageSpaceResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/StorageSpaceDto'
+      allOf:
+        - $ref: "#/components/schemas/FreeShelfApiBaseApiResponse"
+
+    CreateStorageSpaceImageRequest:
+      type: object
+      properties:
+        images:
+          type: array
+          items:
+            properties:
+              spaceId:
+                type: integer
+                format: int64
+                description: ID of the associated storage space
+              imageUrl:
+                type: string
+                description: URL of the image
+              caption:
+                type: string
+                maxLength: 200
+                description: Optional caption for the image
+              primary:
+                type: boolean
+                description: Indicates if this is the primary image
+
+
+
+

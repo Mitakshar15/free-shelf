@@ -48,11 +48,11 @@ public class StorageSpace extends BaseEntity implements Serializable {
   @Column(nullable = false, length = 2000)
   private String description;
 
-  @Column(nullable = false, precision = 10, scale = 2, name = "price_per_month")
-  private Long pricePerMonth;
+  @Column(nullable = false, name = "price_per_month")
+  private Double pricePerMonth;
 
-  @Column(nullable = false, precision = 8, scale = 2)
-  private Long sizeInSquareFeet;
+  @Column(nullable = false, scale = 2)
+  private Double sizeInSquareFeet;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, length = 20, name = "space_type")
@@ -62,13 +62,7 @@ public class StorageSpace extends BaseEntity implements Serializable {
   @Column(nullable = false, length = 20)
   private SpaceStatus status = SpaceStatus.DRAFT;
 
-  @Embedded
-  @AttributeOverrides({
-      @AttributeOverride(name = "street", column = @Column(name = "address_street")),
-      @AttributeOverride(name = "city", column = @Column(name = "address_city")),
-      @AttributeOverride(name = "state", column = @Column(name = "address_state")),
-      @AttributeOverride(name = "zipCode", column = @Column(name = "address_zip_code")),
-      @AttributeOverride(name = "country", column = @Column(name = "address_country"))})
+  @OneToOne(fetch = FetchType.LAZY)
   private Address address;
 
   @ElementCollection

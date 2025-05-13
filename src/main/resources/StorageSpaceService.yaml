@@ -1,0 +1,125 @@
+openapi: 3.0.3
+info:
+  title: Free Shelf Storage Space Services - OpenAPI 3.0
+  description: |-
+    Free Shelf API Spec
+  version: 0.0.1
+  contact:
+    name: API Support
+    email: work.mitakshar@gmail.com
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Free Shelf api  v1
+    description: Free Shelf - Online Free Storage Rental Service
+paths:
+  /v1/storagespace:
+    post:
+      tags:
+        - storage space controller v1
+      summary: Add New Storage Space
+      description: Add New Storage Space
+      operationId: createStorageSpace
+      parameters:
+        - in: header
+          name: "Authorization"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Add New Storage Space
+        content:
+          application/json:
+            schema:
+              $ref: './FreeShelfApiComponents.yaml#/components/schemas/CreateStorageSpaceRequest'
+        required: true
+      responses:
+        '201':
+          description: "Add New Storage Space Success"
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/StorageSpaceResponse'
+        '422':
+          description: "Add New Storage Space Request is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '400':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+    get:
+      tags:
+        - storage space controller v1
+      summary: Get Storage Space
+      description: Get Storage Space
+      operationId: getStorageSpaces
+      parameters:
+        - in: header
+          name: "Authorization"
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: "Get Storage Spaces Success"
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/StorageSpaceResponse'
+        '422':
+          description: "Get Storage Spaces Request is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '400':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+
+  /v1/storagespace/addImages:
+    post:
+      tags:
+        - storage space controller v1
+      summary: Add New Storage Space Images
+      description: Add New Storage Space Images
+      operationId: addStorageSpaceImages
+      parameters:
+        - in: header
+          name: "Authorization"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Add New Storage Space Image
+        content:
+          application/json:
+            schema:
+              $ref: './FreeShelfApiComponents.yaml#/components/schemas/CreateStorageSpaceImageRequest'
+        required: true
+      responses:
+        '201':
+          description: "Add New Storage Space Image Success"
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/StorageSpaceResponse'
+        '422':
+          description: "Add New Storage Space Image Request is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '400':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'

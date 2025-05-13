@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Free Shelf - OpenAPI 3.0
+  title: Free Shelf User endpoints - OpenAPI 3.0
   description: |-
     Free Shelf API Spec
   version: 0.0.1
@@ -25,7 +25,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './UserMgmtApiComponents.yaml#/components/schemas/SignUpRequest'
+              $ref: './FreeShelfApiComponents.yaml#/components/schemas/SignUpRequest'
         required: true
       responses:
         '201':
@@ -33,19 +33,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './UserMgmtApiComponents.yaml#/components/schemas/AuthResponse'
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/AuthResponse'
         '422':
           description: "Signup Request is valid but the service was not able to process it ..."
           content:
             application/json:
               schema:
-                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserMgmtBaseApiResponse'
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
         '400':
           description: "Validations failed for request arguments ..."
           content:
             application/json:
               schema:
-                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserMgmtBaseApiResponse'
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
 
   /v1/auth/signin:
     post:
@@ -59,7 +59,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './UserMgmtApiComponents.yaml#/components/schemas/SignInRequest'
+              $ref: './FreeShelfApiComponents.yaml#/components/schemas/SignInRequest'
         required: true
       responses:
         '200':
@@ -67,19 +67,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './UserMgmtApiComponents.yaml#/components/schemas/AuthResponse'
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/AuthResponse'
         '422':
           description: "Signup Request is valid but the service was not able to process it ..."
           content:
             application/json:
               schema:
-                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserMgmtBaseApiResponse'
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
         '401':
           description: "Validations failed for request arguments ..."
           content:
             application/json:
               schema:
-                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserMgmtBaseApiResponse'
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
 
   /v1/user:
     put:
@@ -99,7 +99,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './UserMgmtApiComponents.yaml#/components/schemas/UpdateProfileRequest'
+              $ref: './FreeShelfApiComponents.yaml#/components/schemas/UpdateProfileRequest'
         required: true
       responses:
         '200':
@@ -107,19 +107,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserMgmtBaseApiResponse'
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
         '422':
           description: "Signup Request is valid but the service was not able to process it ..."
           content:
             application/json:
               schema:
-                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserMgmtBaseApiResponse'
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
         '401':
           description: "Validations failed for request arguments ..."
           content:
             application/json:
               schema:
-                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserMgmtBaseApiResponse'
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
     get:
       tags:
         - user controller v1
@@ -138,18 +138,163 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserProfileResponse'
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/UserProfileResponse'
         '422':
           description: "Get Profile Request is valid but the service was not able to process it ..."
           content:
             application/json:
               schema:
-                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserMgmtBaseApiResponse'
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
         '401':
           description: "Validations failed for request arguments ..."
           content:
             application/json:
               schema:
-                $ref: './UserMgmtApiComponents.yaml#/components/schemas/UserMgmtBaseApiResponse'
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+
+  /v1/user/address:
+    post:
+      tags:
+        - user controller v1
+      summary: Add new Address for User
+      description: Add new Address for User
+      operationId: addAddress
+      parameters:
+        - in: header
+          name: "Authorization"
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: Add new Address Request
+        content:
+          application/json:
+            schema:
+              $ref: './FreeShelfApiComponents.yaml#/components/schemas/AddNewAddressRequest'
+        required: true
+      responses:
+        '201':
+          description: "Add new Address for User Success"
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '422':
+          description: "Add new Address  Request is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '401':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+    put:
+      tags:
+        - user controller v1
+      summary: Edit Address for User
+      description: Edit Address for User
+      operationId: editAddress
+      parameters:
+        - in: header
+          name: "Authorization"
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: Edit Address Request
+        content:
+          application/json:
+            schema:
+              $ref: './FreeShelfApiComponents.yaml#/components/schemas/EditAddressRequest'
+        required: true
+      responses:
+        '200':
+          description: "Edit Address for User Success"
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '422':
+          description: "Edit Address  Request is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '401':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+    get:
+      tags:
+        - user controller v1
+      summary: Get Addresses for User
+      description: Get Addresses for User
+      operationId: getAddresses
+      parameters:
+        - in: header
+          name: "Authorization"
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: "Get Addresses for User Success"
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/AddressResponse'
+        '422':
+          description: "Get Addresses  Request is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '401':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+    delete:
+      tags:
+        - user controller v1
+      summary: Delete Address for User
+      description: Delete Address for User
+      operationId: deleteAddress
+      parameters:
+        - in: header
+          name: "Authorization"
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: "addressId"
+          schema:
+            type: long
+          required: true
+      responses:
+        '200':
+          description: "Delete Address for User Success"
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '422':
+          description: "Delete Address  Request is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '401':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
 
 

@@ -15,25 +15,21 @@ public class AuditorAwareImpl implements AuditorAware<String> {
   public Optional<String> getCurrentAuditor() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-    // If authentication is null or anonymous, return a default value or empty
+    // If authentication is null or anonymous, i.e Signup/Register etc
     if (authentication == null || !authentication.isAuthenticated()
         || authentication instanceof AnonymousAuthenticationToken) {
       return Optional.of("system");
     }
 
-    // Handle different authentication types
     Object principal = authentication.getPrincipal();
 
     if (principal instanceof UserPrincipal) {
-      // JWT authentication with custom UserDetails
       return Optional.of(((UserPrincipal) principal).getUsername());
     } else if (principal instanceof OAuth2User oAuth2User) {
-      // OAuth2 authentication
       String email = oAuth2User.getAttribute("email");
       if (email != null) {
         return Optional.of(email);
       }
-      // Fallback to name attribute if email isn't available
       String name = oAuth2User.getAttribute("name");
       return Optional.ofNullable(name);
     } else if (principal instanceof String) {
@@ -41,7 +37,6 @@ public class AuditorAwareImpl implements AuditorAware<String> {
       return Optional.of(principal.toString());
     }
 
-    // If we can't determine a specific user, use the principal's string representation
     return Optional.of(authentication.getName());
   }
 

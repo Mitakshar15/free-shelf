@@ -1,8 +1,6 @@
 package com.freeshelf.api.v1.controller;
 
 import com.freeshelf.api.builder.ApiResponseBuilder;
-import com.freeshelf.api.config.security.jwt.JwtTokenUtil;
-import com.freeshelf.api.data.repository.UserRepository;
 import com.freeshelf.api.mapper.UserMgmtMapper;
 import com.freeshelf.api.service.interfaces.UserService;
 import com.freeshelf.api.utils.Constants;
@@ -13,18 +11,12 @@ import org.producr.api.dtos.SignInRequest;
 import org.producr.api.dtos.SignUpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
 public class AuthController implements AuthControllerV1Api {
 
-  private final AuthenticationManager authenticationManager;
-  private final UserRepository userRepository;
-  private final PasswordEncoder passwordEncoder;
-  private final JwtTokenUtil jwtTokenUtil;
   private final UserMgmtMapper mapper;
   private final ApiResponseBuilder builder;
   private final UserService userService;

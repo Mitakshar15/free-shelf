@@ -2,10 +2,7 @@ package com.freeshelf.api.data.domain.space;
 
 import com.freeshelf.api.data.domain.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -25,7 +22,8 @@ public class SpaceImage extends BaseEntity implements Serializable {
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "space_id", nullable = false)
+  @JoinColumn(name = "space_id")
+  @ToString.Exclude
   private StorageSpace space;
 
   @Column(nullable = false)

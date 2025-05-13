@@ -3,14 +3,17 @@ package com.freeshelf.api.service.impl;
 import com.freeshelf.api.builder.ApiResponseBuilder;
 import com.freeshelf.api.config.security.jwt.JwtTokenUtil;
 import com.freeshelf.api.config.security.jwt.UserPrincipal;
+import com.freeshelf.api.data.domain.user.Address;
 import com.freeshelf.api.data.domain.user.User;
 import com.freeshelf.api.data.domain.user.UserProfile;
+import com.freeshelf.api.data.repository.AddressRepository;
 import com.freeshelf.api.data.repository.UserProfileRepository;
 import com.freeshelf.api.data.repository.UserRepository;
 import com.freeshelf.api.mapper.UserMgmtMapper;
 import com.freeshelf.api.service.interfaces.UserService;
 import com.freeshelf.api.utils.enums.AuthProvider;
 import com.freeshelf.api.utils.enums.UserRole;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.producr.api.dtos.*;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,7 +24,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +38,7 @@ public class UserServiceImpl implements UserService {
   private final UserMgmtMapper mapper;
   private final PasswordEncoder passwordEncoder;
   private final UserProfileRepository userProfileRepository;
+  private final AddressRepository addressRepository;
 
   @Override
   public AuthResponseDto handleSignIn(SignInRequest signInRequest) {
@@ -106,17 +112,58 @@ public class UserServiceImpl implements UserService {
   @Override
   public User handleGetUserProfile(String authorization) {
     String userId = jwtTokenUtil.getUsernameFromToken(authorization);
-      return userRepository.findByEmailOrUserName(userId)
-          .orElseThrow(() -> new RuntimeException("User not found"));
+    return userRepository.findByEmailOrUserName(userId)
+        .orElseThrow(() -> new RuntimeException("User not found"));
   }
 
   @Override
   @Transactional
   public void handleUpdateUserProfile(User user, UpdateProfileRequest updateProfileRequest) {
-      user.setFirstName(updateProfileRequest.getFirstName());
-      user.setLastName(updateProfileRequest.getLastName());
-      user.getProfile().setBio(updateProfileRequest.getBio());
-      user.getProfile().setProfileImageUrl(updateProfileRequest.getProfileImageUrl());
+    user.setFirstName(updateProfileRequest.getFirstName());
+    user.setLastName(updateProfileRequest.getLastName());
+    user.getProfile().setBio(updateProfileRequest.getBio());
+    user.getProfile().setProfileImageUrl(updateProfileRequest.getProfileImageUrl());
+    userRepository.save(user);
+  }
+
+
+  @Override
+  public void handleAddNewAddress(User user, AddNewAddressRequest addNewAddressRequest) {
+    UserProfile profile = user.getProfile();
+    Address address = fillAddress(addNewAddressRequest);
+    address.setUserProfile(profile);
+    profile.getAddresses().add(address);
+    userProfileRepository.save(profile);
+  }
+
+  private Address fillAddress(AddNewAddressRequest addNewAddressRequest) {
+    Address address = mapper.toAddressEntity(addNewAddressRequest);
+    // TODO: apply logic to set the longitude and latitude automatically
+    address.setLatitude(BigDecimal.valueOf(0));
+    address.setLongitude(BigDecimal.valueOf(0));
+    return address;
+  }
+
+  @Override
+  public void handleDeleteAddress(User user, Long addressId) {
+    try {
+      user.getProfile().getAddresses().remove(addressRepository.findById(addressId)
+          .orElseThrow(() -> new RuntimeException("Address not found")));
       userRepository.save(user);
+    } catch (Exception e) {
+      throw new RuntimeException("Address not found");
+    }
+  }
+
+  @Override
+  public void handleEditAddress(EditAddressRequest editAddressRequest) {
+    Address address = mapper.toAddressEntity(editAddressRequest);
+    addressRepository.save(address);
+  }
+
+  @Override
+  public Set<@Valid Address> handleGetAddresses(User user) {
+    Set<Address> addresses = user.getProfile().getAddresses();
+    return addresses;
   }
 }

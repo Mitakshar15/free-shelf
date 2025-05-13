@@ -34,11 +34,12 @@ public class StorageServiceImpl implements StorageSpaceService {
     space.setAddress(address);
     space.setHost(user);
     space.setStatus(SpaceStatus.DRAFT);
+
     return storageSpaceRepository.save(space);
   }
 
   @Override
   public Set<StorageSpace> handleGetStorageSpaces(User user) {
-      return storageSpaceRepository.findByHost(user).orElse(Set.of());
+    return storageSpaceRepository.findByHost(user).orElse(Set.of());
   }
 }

@@ -15,8 +15,7 @@ public class AvailabilityPeriod extends BaseEntity {
   @Column(name = "availability_period_id")
   private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "space_id", nullable = false)
+  @OneToOne(fetch = FetchType.LAZY)
   private StorageSpace space;
 
   @Column(name = "start_date", nullable = false)
@@ -24,5 +23,6 @@ public class AvailabilityPeriod extends BaseEntity {
 
   @Column(name = "end_date", nullable = false)
   private LocalDateTime endDate;
+
 
 }

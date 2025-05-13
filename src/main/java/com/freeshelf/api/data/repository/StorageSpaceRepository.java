@@ -8,5 +8,5 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface StorageSpaceRepository extends JpaRepository<StorageSpace, Long> {
-    Optional<Set<StorageSpace>> findByHost(User host);
+  Optional<Set<StorageSpace>> findByHost(User host);
 }

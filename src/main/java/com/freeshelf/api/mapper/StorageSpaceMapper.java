@@ -23,5 +23,10 @@ public interface StorageSpaceMapper {
   StorageSpaceDto toStorageSpaceDto(StorageSpace storageSpace);
 
   List<@Valid StorageSpaceDto> toStorageSpaceSet(Set<StorageSpace> storageSpaces);
+
+  SpaceImageResponse toSpaceImageResponse(BaseApiResponse baseApiResponse);
+
+  @Valid
+  List<SpaceImageDto> toSpaceImageDto(List<SpaceImage> spaceImage);
 }
 

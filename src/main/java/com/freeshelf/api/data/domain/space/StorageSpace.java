@@ -74,8 +74,8 @@ public class StorageSpace extends BaseEntity implements Serializable {
   @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<SpaceImage> images = new ArrayList<>();
 
-  @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<AvailabilityPeriod> availabilityPeriods = new ArrayList<>();
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private AvailabilityPeriod availabilityPeriod;
 
   @OneToMany(mappedBy = "space", cascade = CascadeType.ALL)
   private Set<Rating> ratings = new HashSet<>();

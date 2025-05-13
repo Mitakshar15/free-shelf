@@ -4,6 +4,7 @@ import com.freeshelf.api.builder.ApiResponseBuilder;
 import com.freeshelf.api.data.domain.space.StorageSpace;
 import com.freeshelf.api.data.domain.user.User;
 import com.freeshelf.api.mapper.StorageSpaceMapper;
+import com.freeshelf.api.service.interfaces.ImageService;
 import com.freeshelf.api.service.interfaces.StorageSpaceService;
 import com.freeshelf.api.service.interfaces.UserService;
 import com.freeshelf.api.utils.Constants;
@@ -12,10 +13,13 @@ import org.aspectj.apache.bcel.classfile.Constant;
 import org.producr.api.StorageSpaceControllerV1Api;
 import org.producr.api.dtos.CreateStorageSpaceRequest;
 import org.producr.api.dtos.FreeShelfApiBaseApiResponse;
+import org.producr.api.dtos.SpaceImageResponse;
 import org.producr.api.dtos.StorageSpaceResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -27,6 +31,7 @@ public class StorageSpaceController implements StorageSpaceControllerV1Api {
   private final ApiResponseBuilder apiResponseBuilder;
   private final UserService userService;
   private final StorageSpaceService storageSpaceService;
+  private final ImageService imageService;
 
 
   @Override
@@ -43,9 +48,33 @@ public class StorageSpaceController implements StorageSpaceControllerV1Api {
   @Override
   public ResponseEntity<StorageSpaceResponse> getStorageSpaces(String authorization)
       throws Exception {
-    StorageSpaceResponse response = mapper.toStorageSpaceResponse(apiResponseBuilder.buildSuccessApiResponse(Constants.GET_STORAGE_SPACE_SUCCESS_MESSAGE));
+    StorageSpaceResponse response = mapper.toStorageSpaceResponse(
+        apiResponseBuilder.buildSuccessApiResponse(Constants.GET_STORAGE_SPACE_SUCCESS_MESSAGE));
     User user = userService.handleGetUserProfile(authorization);
     response.data(mapper.toStorageSpaceSet(storageSpaceService.handleGetStorageSpaces(user)));
     return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<SpaceImageResponse> setImageAsPrimary(Long spaceId, Long imageId)
+      throws Exception {
+    SpaceImageResponse response = mapper.toSpaceImageResponse(
+        apiResponseBuilder.buildSuccessApiResponse(Constants.SET_IMAGE_AS_PRIMARY_SUCCESS_MESSAGE));
+    response
+        .data(mapper.toSpaceImageDto(List.of(imageService.setImageAsPrimary(spaceId, imageId))));
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<SpaceImageResponse> addStorageSpaceImages(String authorization,
+      Long storageSpaceId, @RequestParam("images") List<MultipartFile> images,
+      @RequestParam(value = "captions", required = false) List<String> captions) throws Exception {
+    SpaceImageResponse response = mapper.toSpaceImageResponse(apiResponseBuilder
+        .buildSuccessApiResponse(Constants.ADD_STORAGE_SPACE_IMAGES_SUCCESS_MESSAGE));
+    User user = userService.handleGetUserProfile(authorization);
+    response.data(
+        mapper.toSpaceImageDto(imageService.uploadImages(user, storageSpaceId, images, captions)));
+    imageService.uploadImages(user, storageSpaceId, images, captions);
+    return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 }

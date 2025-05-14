@@ -1,13 +1,13 @@
 package com.freeshelf.api.data.domain.user;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.freeshelf.api.data.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serial;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -19,7 +19,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "user_profiles")
-public class UserProfile extends BaseEntity implements Serializable {
+public class UserProfile extends BaseEntity {
   @Serial
   private static final long serialVersionUID = 1L;
 
@@ -28,10 +28,11 @@ public class UserProfile extends BaseEntity implements Serializable {
   @Column(name = "user_profile_id")
   private Long id;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.EAGER)
   @MapsId
   @JoinColumn(name = "user_id", nullable = false)
-  @JsonBackReference
+  @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+  @JsonIdentityReference(alwaysAsId = true)
   @ToString.Exclude
   private User user;
 
@@ -43,7 +44,8 @@ public class UserProfile extends BaseEntity implements Serializable {
 
   @OneToMany(mappedBy = "userProfile", cascade = CascadeType.ALL, orphanRemoval = true,
       fetch = FetchType.EAGER)
-  @JsonManagedReference
+  @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+  @JsonIdentityReference(alwaysAsId = true)
   private Set<Address> addresses = new HashSet<>();
 
   @ElementCollection

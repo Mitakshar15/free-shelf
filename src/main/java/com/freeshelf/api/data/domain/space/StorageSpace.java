@@ -1,5 +1,8 @@
 package com.freeshelf.api.data.domain.space;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.freeshelf.api.data.domain.BaseEntity;
 import com.freeshelf.api.data.domain.booking.Rating;
 import com.freeshelf.api.data.domain.booking.Review;
@@ -13,9 +16,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serial;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,7 +36,7 @@ import java.util.Set;
         @Index(name = "idx_space_type", columnList = "space_type"),
         @Index(name = "idx_space_location", columnList = "latitude,longitude"),
         @Index(name = "idx_space_price", columnList = "price_per_month")})
-public class StorageSpace extends BaseEntity implements Serializable {
+public class StorageSpace extends BaseEntity {
 
   @Serial
   private static final long serialVersionUID = 1L;
@@ -43,8 +46,11 @@ public class StorageSpace extends BaseEntity implements Serializable {
   @Column(name = "space_id")
   private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "host_id", nullable = false)
+  @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+  @JsonIdentityReference(alwaysAsId = true)
+  @ToString.Exclude
   private User host;
 
   @Column(nullable = false, length = 100)
@@ -69,6 +75,8 @@ public class StorageSpace extends BaseEntity implements Serializable {
 
   @OneToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "address_id")
+  @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+  @JsonIdentityReference(alwaysAsId = true)
   private Address address;
 
   @ElementCollection
@@ -78,15 +86,23 @@ public class StorageSpace extends BaseEntity implements Serializable {
   private Set<SpaceFeature> features = new HashSet<>();
 
   @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+  @JsonIdentityReference(alwaysAsId = true)
   private List<SpaceImage> images = new ArrayList<>();
 
-  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+  @JsonIdentityReference(alwaysAsId = true)
   private AvailabilityPeriod availabilityPeriod;
 
   @OneToMany(mappedBy = "space", cascade = CascadeType.ALL)
+  @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+  @JsonIdentityReference(alwaysAsId = true)
   private Set<Rating> ratings = new HashSet<>();
 
   @OneToMany(mappedBy = "space", cascade = CascadeType.ALL)
+  @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+  @JsonIdentityReference(alwaysAsId = true)
   private Set<Review> reviews = new HashSet<>();
 
   @Override

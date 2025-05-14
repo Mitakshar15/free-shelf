@@ -87,7 +87,7 @@ public class ImageServiceImpl implements ImageService {
         spaceImage.setPrimary(false);
       }
 
-      spaceImageRepository.save(spaceImage);
+      //spaceImageRepository.save(spaceImage);
       savedImages.add(spaceImage);
 
       // Update space entity

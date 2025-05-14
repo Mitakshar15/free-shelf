@@ -89,6 +89,7 @@ public class StorageSpace extends BaseEntity {
       fetch = FetchType.EAGER)
   @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
   @JsonIdentityReference(alwaysAsId = true)
+  @ToString.Exclude
   private List<SpaceImage> images = new ArrayList<>();
 
   @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

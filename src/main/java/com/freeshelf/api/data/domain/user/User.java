@@ -79,8 +79,6 @@ public class User extends BaseEntity {
   @Column(name = "provider_id")
   private String providerId;
 
-  @OneToMany(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<StorageSpace> spaces = new HashSet<>();
 
   @Override
   public boolean equals(Object o) {

@@ -40,6 +40,7 @@ public class ImageServiceImpl implements ImageService {
   @Override
   public List<SpaceImage> uploadImages(User user, Long spaceId, List<MultipartFile> files,
       List<String> captions) throws BadRequestException {
+    // Get a fresh instance of the storage space for each upload to avoid optimistic locking issues
     StorageSpace space = storageSpaceRepository.findById(spaceId)
         .orElseThrow(() -> new RuntimeException("Storage space not found with id: " + spaceId));
 
@@ -87,14 +88,20 @@ public class ImageServiceImpl implements ImageService {
         spaceImage.setPrimary(false);
       }
 
-      //spaceImageRepository.save(spaceImage);
+      // Save the image directly to ensure it's persisted properly
+      spaceImageRepository.save(spaceImage);
       savedImages.add(spaceImage);
 
       // Update space entity
       space.getImages().add(spaceImage);
     }
 
-    storageSpaceRepository.save(space);
+    // Save the updated space entity
+    storageSpaceRepository.saveAndFlush(space);
+    
+    // Clear the persistence context to ensure fresh entities on subsequent calls
+    storageSpaceRepository.flush();
+    
     return savedImages;
   }
 

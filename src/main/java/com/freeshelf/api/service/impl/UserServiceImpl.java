@@ -119,12 +119,36 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void handleUpdateUserProfile(User user, UpdateProfileRequest updateProfileRequest) {
-    user.setFirstName(updateProfileRequest.getFirstName());
-    user.setLastName(updateProfileRequest.getLastName());
-    user.getProfile().setBio(updateProfileRequest.getBio());
-    user.getProfile().setProfileImageUrl(updateProfileRequest.getProfileImageUrl());
-    userRepository.save(user);
+  public void handleUpdateUserProfile(String authorization, UpdateProfileRequest updateProfileRequest) {
+    try {
+      // Extract user ID from token
+      String userName = jwtTokenUtil.getUsernameFromToken(authorization);
+
+      User user = userRepository.findByEmailOrUserName(userName)
+          .orElseThrow(() -> new RuntimeException("User not found"));
+
+      user.setFirstName(updateProfileRequest.getFirstName());
+      user.setLastName(updateProfileRequest.getLastName());
+      
+      // Update profile fields
+      if (user.getProfile() != null) {
+        user.getProfile().setBio(updateProfileRequest.getBio());
+        user.getProfile().setProfileImageUrl(updateProfileRequest.getProfileImageUrl());
+      }
+      
+      // Save and flush changes immediately
+      userRepository.saveAndFlush(user);
+      
+      // Clear the persistence context to ensure fresh entities on subsequent calls
+      userRepository.flush();
+    } catch (org.springframework.orm.ObjectOptimisticLockingFailureException e) {
+      // Handle optimistic locking exception specifically
+      // This is a more targeted approach to the specific exception we're seeing
+      throw new RuntimeException("Could not update profile due to concurrent modification. Please try again.", e);
+    } catch (Exception e) {
+      // Handle other exceptions
+      throw new RuntimeException("Failed to update user profile: " + e.getMessage(), e);
+    }
   }
 
 

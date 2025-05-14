@@ -30,7 +30,7 @@ import java.util.Map;
 
 @Configuration
 @EnableRedisRepositories(
-        enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
+    enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
 @RequiredArgsConstructor
 public class CacheConfig {
 
@@ -43,7 +43,7 @@ public class CacheConfig {
 
     ObjectMapper objectMapper = objectMapper();
     GenericJackson2JsonRedisSerializer serializer =
-            new GenericJackson2JsonRedisSerializer(objectMapper);
+        new GenericJackson2JsonRedisSerializer(objectMapper);
 
     template.setKeySerializer(new StringRedisSerializer());
     template.setValueSerializer(serializer);
@@ -54,40 +54,42 @@ public class CacheConfig {
     return template;
   }
 
-//  @Bean
-//  public ObjectMapper objectMapper() {
-//    ObjectMapper mapper = new ObjectMapper();
-//    mapper.registerModule(new JavaTimeModule()); // Support Java 8 date/time types
-//    return mapper;
-//  }
-@Bean
-public ObjectMapper objectMapper() {
-  ObjectMapper mapper = new ObjectMapper();
+  // @Bean
+  // public ObjectMapper objectMapper() {
+  // ObjectMapper mapper = new ObjectMapper();
+  // mapper.registerModule(new JavaTimeModule()); // Support Java 8 date/time types
+  // return mapper;
+  // }
+  @Bean
+  public ObjectMapper objectMapper() {
+    ObjectMapper mapper = new ObjectMapper();
 
-  // Register JavaTimeModule for Java 8 date/time types
-  JavaTimeModule javaTimeModule = new JavaTimeModule();
+    // Register JavaTimeModule for Java 8 date/time types
+    JavaTimeModule javaTimeModule = new JavaTimeModule();
 
-  // Configure serialization for OffsetDateTime
-  javaTimeModule.addSerializer(OffsetDateTime.class, new JsonSerializer<OffsetDateTime>() {
-    @Override
-    public void serialize(OffsetDateTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-      gen.writeString(value.toString()); // ISO-8601 format
-    }
-  });
+    // Configure serialization for OffsetDateTime
+    javaTimeModule.addSerializer(OffsetDateTime.class, new JsonSerializer<OffsetDateTime>() {
+      @Override
+      public void serialize(OffsetDateTime value, JsonGenerator gen, SerializerProvider serializers)
+          throws IOException {
+        gen.writeString(value.toString()); // ISO-8601 format
+      }
+    });
 
-  // Configure deserialization for OffsetDateTime
-  javaTimeModule.addDeserializer(OffsetDateTime.class, new JsonDeserializer<OffsetDateTime>() {
-    @Override
-    public OffsetDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-      return OffsetDateTime.parse(p.getValueAsString());
-    }
-  });
+    // Configure deserialization for OffsetDateTime
+    javaTimeModule.addDeserializer(OffsetDateTime.class, new JsonDeserializer<OffsetDateTime>() {
+      @Override
+      public OffsetDateTime deserialize(JsonParser p, DeserializationContext ctxt)
+          throws IOException {
+        return OffsetDateTime.parse(p.getValueAsString());
+      }
+    });
 
-  mapper.registerModule(javaTimeModule);
+    mapper.registerModule(javaTimeModule);
 
-  // Optional: Configure to use ISO-8601 dates by default
-  mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    // Optional: Configure to use ISO-8601 dates by default
+    mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
-  return mapper;
-}
+    return mapper;
+  }
 }

@@ -85,7 +85,8 @@ public class StorageSpace extends BaseEntity {
   @Column(name = "feature", length = 30)
   private Set<SpaceFeature> features = new HashSet<>();
 
-  @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true,
+      fetch = FetchType.EAGER)
   @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
   @JsonIdentityReference(alwaysAsId = true)
   private List<SpaceImage> images = new ArrayList<>();

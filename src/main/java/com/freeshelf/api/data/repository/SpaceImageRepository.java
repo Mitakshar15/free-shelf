@@ -22,12 +22,6 @@ public interface SpaceImageRepository extends JpaRepository<SpaceImage, Long> {
 
   boolean existsBySpaceIdAndPrimaryTrue(Long spaceId);
 
-  @Override
-  @Cacheable(value = "spaceImage", key = "#id")
-  Optional<SpaceImage> findById(Long id);
 
-  @Override
-  @CachePut(value = "spaceImage", key = "#spaceImage.id")
-  <S extends SpaceImage> S save(S spaceImage);
 
 }

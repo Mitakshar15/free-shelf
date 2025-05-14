@@ -2,6 +2,7 @@ package com.freeshelf.api.data.repository;
 
 import com.freeshelf.api.data.domain.space.StorageSpace;
 import com.freeshelf.api.data.domain.user.User;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,7 +29,7 @@ public interface StorageSpaceRepository extends JpaRepository<StorageSpace, Long
   Optional<StorageSpace> findById(Long id);
 
   @Override
-  @CachePut(value = "space", key = "#space")
+  @CachePut(value = "space", key = "#space.id")
   <S extends StorageSpace> S save(S space);
 
 }

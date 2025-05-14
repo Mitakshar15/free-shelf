@@ -1,5 +1,10 @@
 package com.freeshelf.api.config;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -8,55 +13,81 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisKeyValueAdapter;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import java.io.IOException;
 import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@EnableCaching
+@EnableRedisRepositories(
+        enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
+@RequiredArgsConstructor
 public class CacheConfig {
 
-  @Bean
-  public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
-    // Use our custom Redis serializer for better handling of complex entity relationships
-    CustomRedisSerializer customRedisSerializer = new CustomRedisSerializer();
-
-    // Configure Redis cache
-    RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-        .entryTtl(Duration.ofHours(24)) // Set default TTL to 24 hours
-        .disableCachingNullValues()
-        .serializeKeysWith(
-            RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-        .serializeValuesWith(
-            RedisSerializationContext.SerializationPair.fromSerializer(customRedisSerializer));
-
-    // Build and return the cache manager
-    return RedisCacheManager.builder(redisConnectionFactory).cacheDefaults(redisCacheConfiguration)
-        .build();
-  }
+  private final LettuceConnectionFactory redisConnectionFactory;
 
   @Bean
-  public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
-    return (builder) -> {
-      // Configure different TTLs for different cache names
-      Map<String, RedisCacheConfiguration> configMap = new HashMap<>();
+  public RedisTemplate<String, Object> redisTemplate() {
+    RedisTemplate<String, Object> template = new RedisTemplate<>();
+    template.setConnectionFactory(redisConnectionFactory);
 
-      // User cache with 1 hour TTL
-      configMap.put("user", RedisCacheConfiguration.defaultCacheConfig()
-          .entryTtl(Duration.ofHours(1)).disableCachingNullValues());
+    ObjectMapper objectMapper = objectMapper();
+    GenericJackson2JsonRedisSerializer serializer =
+            new GenericJackson2JsonRedisSerializer(objectMapper);
 
-      // Space cache with 2 hours TTL
-      configMap.put("space", RedisCacheConfiguration.defaultCacheConfig()
-          .entryTtl(Duration.ofHours(2)).disableCachingNullValues());
+    template.setKeySerializer(new StringRedisSerializer());
+    template.setValueSerializer(serializer);
+    template.setHashKeySerializer(new StringRedisSerializer());
+    template.setHashValueSerializer(serializer);
+    template.afterPropertiesSet();
 
-      // Address cache with 6 hours TTL
-      configMap.put("address", RedisCacheConfiguration.defaultCacheConfig()
-          .entryTtl(Duration.ofHours(6)).disableCachingNullValues());
-
-      builder.withInitialCacheConfigurations(configMap);
-    };
+    return template;
   }
+
+//  @Bean
+//  public ObjectMapper objectMapper() {
+//    ObjectMapper mapper = new ObjectMapper();
+//    mapper.registerModule(new JavaTimeModule()); // Support Java 8 date/time types
+//    return mapper;
+//  }
+@Bean
+public ObjectMapper objectMapper() {
+  ObjectMapper mapper = new ObjectMapper();
+
+  // Register JavaTimeModule for Java 8 date/time types
+  JavaTimeModule javaTimeModule = new JavaTimeModule();
+
+  // Configure serialization for OffsetDateTime
+  javaTimeModule.addSerializer(OffsetDateTime.class, new JsonSerializer<OffsetDateTime>() {
+    @Override
+    public void serialize(OffsetDateTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+      gen.writeString(value.toString()); // ISO-8601 format
+    }
+  });
+
+  // Configure deserialization for OffsetDateTime
+  javaTimeModule.addDeserializer(OffsetDateTime.class, new JsonDeserializer<OffsetDateTime>() {
+    @Override
+    public OffsetDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+      return OffsetDateTime.parse(p.getValueAsString());
+    }
+  });
+
+  mapper.registerModule(javaTimeModule);
+
+  // Optional: Configure to use ISO-8601 dates by default
+  mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+
+  return mapper;
+}
 }

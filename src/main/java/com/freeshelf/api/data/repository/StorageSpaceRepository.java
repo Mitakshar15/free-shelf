@@ -28,7 +28,7 @@ public interface StorageSpaceRepository extends JpaRepository<StorageSpace, Long
   Optional<StorageSpace> findById(Long id);
 
   @Override
-  @CachePut(value = "space", key = "#user")
-  <S extends StorageSpace> S save(S user);
+  @CachePut(value = "space", key = "#space")
+  <S extends StorageSpace> S save(S space);
 
 }

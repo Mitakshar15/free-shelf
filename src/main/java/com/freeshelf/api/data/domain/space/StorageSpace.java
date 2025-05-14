@@ -11,8 +11,10 @@ import com.freeshelf.api.utils.enums.SpaceType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -32,6 +34,9 @@ import java.util.Set;
         @Index(name = "idx_space_location", columnList = "latitude,longitude"),
         @Index(name = "idx_space_price", columnList = "price_per_month")})
 public class StorageSpace extends BaseEntity implements Serializable {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,7 +67,8 @@ public class StorageSpace extends BaseEntity implements Serializable {
   @Column(nullable = false, length = 20)
   private SpaceStatus status = SpaceStatus.DRAFT;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "address_id")
   private Address address;
 
   @ElementCollection
@@ -82,5 +88,20 @@ public class StorageSpace extends BaseEntity implements Serializable {
 
   @OneToMany(mappedBy = "space", cascade = CascadeType.ALL)
   private Set<Review> reviews = new HashSet<>();
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
+    StorageSpace space = (StorageSpace) o;
+    return getId() != null && getId().equals(space.getId());
+  }
+
+  @Override
+  public int hashCode() {
+    return getClass().hashCode();
+  }
 
 }

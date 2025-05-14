@@ -1,10 +1,12 @@
 package com.freeshelf.api.data.domain.user;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import com.freeshelf.api.data.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 
@@ -13,7 +15,10 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Address extends BaseEntity {
+public class Address extends BaseEntity implements Serializable {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,8 +52,9 @@ public class Address extends BaseEntity {
   @Column(precision = 10, scale = 7)
   private BigDecimal longitude;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "user_profile_id", nullable = false)
   @ToString.Exclude
   private UserProfile userProfile;
+
 }

@@ -6,6 +6,7 @@ import com.freeshelf.api.data.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +20,8 @@ import java.util.Set;
 @Entity
 @Table(name = "user_profiles")
 public class UserProfile extends BaseEntity implements Serializable {
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,8 +31,8 @@ public class UserProfile extends BaseEntity implements Serializable {
   @OneToOne(fetch = FetchType.LAZY)
   @MapsId
   @JoinColumn(name = "user_id", nullable = false)
-  @ToString.Exclude
   @JsonBackReference
+  @ToString.Exclude
   private User user;
 
   @Column(length = 1000)
@@ -47,6 +50,7 @@ public class UserProfile extends BaseEntity implements Serializable {
   @CollectionTable(name = "user_preferences", joinColumns = @JoinColumn(name = "user_id"))
   @MapKeyColumn(name = "preference_key")
   @Column(name = "preference_value")
+  @ToString.Exclude
   private Map<String, String> preferences = new HashMap<>();
 
   @Override

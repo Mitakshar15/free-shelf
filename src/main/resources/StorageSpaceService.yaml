@@ -170,3 +170,32 @@ paths:
         '404':
           description: Space or image not found
 
+  /v1/storagespace/find:
+    post:
+      operationId: findNearestStorageSpace
+      summary: Find Nearest Storage Space Available for User
+      tags:
+        - storage space controller v1
+      parameters:
+        - in: header
+          name: "Authorization"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './FreeShelfApiComponents.yaml#/components/schemas/FindNearestStorageSpaceRequest'
+      responses:
+        '200':
+          description: Storage Space successfully found
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/StorageSpaceResponse'
+        '404':
+          description: Space  not found
+
+

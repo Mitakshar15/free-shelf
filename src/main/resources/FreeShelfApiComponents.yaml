@@ -377,12 +377,12 @@ components:
           properties:
             startDate:
               type: string
-              format: local-date-time
+              format: date-time
               x-java-type: java.time.LocalDateTime
               description: Start date and time of availability
             endDate:
               type: string
-              format: local-date-time
+              format: date-time
               x-java-type: java.time.LocalDateTime
               description: End date and time of availability
 
@@ -515,11 +515,11 @@ components:
           description: ID of the associated storage space
         startDate:
           type: string
-          format: local-date-time
+          format: date-time
           description: Start date and time of availability
         endDate:
           type: string
-          format: local-date-time
+          format: date-time
           description: End date and time of availability
         version:
           type: integer
@@ -641,6 +641,7 @@ components:
       properties:
         data:
           type: array
+          uniqueItems: true
           items:
             $ref: '#/components/schemas/StorageSpaceDto'
       allOf:
@@ -655,6 +656,16 @@ components:
             $ref: '#/components/schemas/SpaceImageDto'
       allOf:
         - $ref: "#/components/schemas/FreeShelfApiBaseApiResponse"
+
+    FindNearestStorageSpaceRequest:
+      type: object
+      properties:
+        latitude:
+          type: number
+        longitude:
+          type: number
+        radius:
+          type: number
 
 
 

@@ -1,7 +1,6 @@
 package com.freeshelf.api.v1.controller;
 
 import com.freeshelf.api.builder.ApiResponseBuilder;
-import com.freeshelf.api.data.domain.space.StorageSpace;
 import com.freeshelf.api.data.domain.user.User;
 import com.freeshelf.api.mapper.StorageSpaceMapper;
 import com.freeshelf.api.service.interfaces.ImageService;
@@ -9,19 +8,17 @@ import com.freeshelf.api.service.interfaces.StorageSpaceService;
 import com.freeshelf.api.service.interfaces.UserService;
 import com.freeshelf.api.utils.Constants;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.apache.bcel.classfile.Constant;
 import org.producr.api.StorageSpaceControllerV1Api;
-import org.producr.api.dtos.CreateStorageSpaceRequest;
-import org.producr.api.dtos.FreeShelfApiBaseApiResponse;
-import org.producr.api.dtos.SpaceImageResponse;
-import org.producr.api.dtos.StorageSpaceResponse;
+import org.producr.api.dtos.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,7 +37,7 @@ public class StorageSpaceController implements StorageSpaceControllerV1Api {
     StorageSpaceResponse storageSpaceResponse = mapper.toStorageSpaceResponse(
         apiResponseBuilder.buildSuccessApiResponse(Constants.CREATE_STORAGE_SPACE_SUCCESS_MESSAGE));
     User user = userService.handleGetUserProfile(authorization);
-    storageSpaceResponse.data(List.of(mapper.toStorageSpaceDto(
+    storageSpaceResponse.data(Set.of(mapper.toStorageSpaceDto(
         storageSpaceService.handleCreateStorageSpace(user, createStorageSpaceRequest))));
     return new ResponseEntity<>(storageSpaceResponse, HttpStatus.OK);
   }
@@ -76,5 +73,16 @@ public class StorageSpaceController implements StorageSpaceControllerV1Api {
         mapper.toSpaceImageDto(imageService.uploadImages(user, storageSpaceId, images, captions)));
     imageService.uploadImages(user, storageSpaceId, images, captions);
     return new ResponseEntity<>(response, HttpStatus.CREATED);
+  }
+
+  @Override
+  public ResponseEntity<StorageSpaceResponse> findNearestStorageSpace(String authorization,
+      @RequestBody FindNearestStorageSpaceRequest findNearestStorageSpaceRequest) throws Exception {
+    StorageSpaceResponse response = mapper.toStorageSpaceResponse(apiResponseBuilder
+        .buildSuccessApiResponse(Constants.FIND_NEAREST_STORAGE_SPACE_SUCCESS_MESSAGE));
+    User user = userService.handleGetUserProfile(authorization);
+    response.data(mapper.toStorageSpaceSet(
+        storageSpaceService.handleFindNearestStorageSpace(user, findNearestStorageSpaceRequest)));
+    return new ResponseEntity<>(response, HttpStatus.OK);
   }
 }

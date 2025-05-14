@@ -20,4 +20,6 @@ public class Constants {
       "add.storage.space.images.success.message";
   public static final String SET_IMAGE_AS_PRIMARY_SUCCESS_MESSAGE =
       "set.image.as.primary.success.message";;;
+  public static final String FIND_NEAREST_STORAGE_SPACE_SUCCESS_MESSAGE =
+      "find.nearest.storage.space.success.message";;
 }

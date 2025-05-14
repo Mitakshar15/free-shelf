@@ -4,6 +4,7 @@ import com.freeshelf.api.data.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 
@@ -15,6 +16,8 @@ import java.io.Serializable;
 @Table(name = "space_images", indexes = {@Index(name = "idx_image_space", columnList = "space_id"),
     @Index(name = "idx_image_primary", columnList = "primary_flag")})
 public class SpaceImage extends BaseEntity implements Serializable {
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -35,7 +35,7 @@ public class JwtTokenUtil {
     }
 
     if (userDetails instanceof UserPrincipal userPrincipal) {
-        claims.put("userId", userPrincipal.getId());
+      claims.put("userId", userPrincipal.getId());
       claims.put("email", userPrincipal.getEmail());
     }
 
@@ -70,9 +70,11 @@ public class JwtTokenUtil {
       throw new RuntimeException("INVALID TOKEN ::" + token + ":: ERROR" + e.getMessage());
     }
   }
+
   public Long getUserIdFromToken(String token) {
     try {
-      Long claim = Long.valueOf(getClaimFromToken(token, claims -> String.valueOf(claims.get("userId"))));
+      Long claim =
+          Long.valueOf(getClaimFromToken(token, claims -> String.valueOf(claims.get("userId"))));
       return claim;
     } catch (Exception e) {
       throw new RuntimeException("INVALID TOKEN ::" + token + ":: ERROR" + e.getMessage());

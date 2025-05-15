@@ -28,6 +28,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Set;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +42,9 @@ public class UserServiceImpl implements UserService {
   private final PasswordEncoder passwordEncoder;
   private final UserProfileRepository userProfileRepository;
   private final AddressRepository addressRepository;
+  
+  @PersistenceContext
+  private EntityManager entityManager;
 
   @Override
   public AuthResponseDto handleSignIn(SignInRequest signInRequest) {
@@ -123,10 +128,12 @@ public class UserServiceImpl implements UserService {
     try {
       // Extract user ID from token
       Long userId = jwtTokenUtil.getUserIdFromToken(authorization);
-
+      
+      // Get the user entity
       User user = userRepository.findById(userId)
           .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
+      // Update user fields
       user.setFirstName(updateProfileRequest.getFirstName());
       user.setLastName(updateProfileRequest.getLastName());
       
@@ -136,15 +143,14 @@ public class UserServiceImpl implements UserService {
         user.getProfile().setProfileImageUrl(updateProfileRequest.getProfileImageUrl());
       }
       
-      // Save and flush changes immediately
-      userRepository.saveAndFlush(user);
+      // Save the updated user to the database
+      User updatedUser = userRepository.save(user);
       
-      // Clear the persistence context to ensure fresh entities on subsequent calls
-      userRepository.flush();
+      // Refresh the entity in the persistence context to ensure cache is updated
+      entityManager.refresh(updatedUser);
 
     } catch (org.springframework.orm.ObjectOptimisticLockingFailureException e) {
       // Handle optimistic locking exception specifically
-      // This is a more targeted approach to the specific exception we're seeing
       throw new RuntimeException("Could not update profile due to concurrent modification. Please try again.", e);
     } catch (Exception e) {
       // Handle other exceptions

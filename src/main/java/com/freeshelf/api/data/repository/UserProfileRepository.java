@@ -9,5 +9,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface UserProfileRepository extends JpaRepository<UserProfile, Long> {
+    @Override
+    @Cacheable(value = "userprofile", key = "#id")
+    Optional<UserProfile> findById(Long id);
 
+    @Override
+    @CachePut(value = "userprofile", key = "#userprofile.id")
+    <S extends UserProfile> S save(S userprofile);
 }

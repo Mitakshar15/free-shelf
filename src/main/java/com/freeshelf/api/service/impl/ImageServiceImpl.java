@@ -98,10 +98,10 @@ public class ImageServiceImpl implements ImageService {
 
     // Save the updated space entity
     storageSpaceRepository.saveAndFlush(space);
-    
+
     // Clear the persistence context to ensure fresh entities on subsequent calls
     storageSpaceRepository.flush();
-    
+
     return savedImages;
   }
 

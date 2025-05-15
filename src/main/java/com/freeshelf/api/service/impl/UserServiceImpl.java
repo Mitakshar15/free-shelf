@@ -28,6 +28,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Set;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +42,9 @@ public class UserServiceImpl implements UserService {
   private final PasswordEncoder passwordEncoder;
   private final UserProfileRepository userProfileRepository;
   private final AddressRepository addressRepository;
+  
+  @PersistenceContext
+  private EntityManager entityManager;
 
   @Override
   public AuthResponseDto handleSignIn(SignInRequest signInRequest) {
@@ -112,19 +117,45 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User handleGetUserProfile(String authorization) {
-    String userId = jwtTokenUtil.getUsernameFromToken(authorization);
-    return userRepository.findByEmailOrUserName(userId)
+    Long userId = jwtTokenUtil.getUserIdFromToken(authorization);
+    return userRepository.findById(userId)
         .orElseThrow(() -> new RuntimeException("User not found"));
   }
 
   @Override
   @Transactional
-  public void handleUpdateUserProfile(User user, UpdateProfileRequest updateProfileRequest) {
-    user.setFirstName(updateProfileRequest.getFirstName());
-    user.setLastName(updateProfileRequest.getLastName());
-    user.getProfile().setBio(updateProfileRequest.getBio());
-    user.getProfile().setProfileImageUrl(updateProfileRequest.getProfileImageUrl());
-    userRepository.save(user);
+  public void handleUpdateUserProfile(String authorization, UpdateProfileRequest updateProfileRequest) {
+    try {
+      // Extract user ID from token
+      Long userId = jwtTokenUtil.getUserIdFromToken(authorization);
+      
+      // Get the user entity
+      User user = userRepository.findById(userId)
+          .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+
+      // Update user fields
+      user.setFirstName(updateProfileRequest.getFirstName());
+      user.setLastName(updateProfileRequest.getLastName());
+      
+      // Update profile fields
+      if (user.getProfile() != null) {
+        user.getProfile().setBio(updateProfileRequest.getBio());
+        user.getProfile().setProfileImageUrl(updateProfileRequest.getProfileImageUrl());
+      }
+      
+      // Save the updated user to the database
+      User updatedUser = userRepository.save(user);
+      
+      // Refresh the entity in the persistence context to ensure cache is updated
+      entityManager.refresh(updatedUser);
+
+    } catch (org.springframework.orm.ObjectOptimisticLockingFailureException e) {
+      // Handle optimistic locking exception specifically
+      throw new RuntimeException("Could not update profile due to concurrent modification. Please try again.", e);
+    } catch (Exception e) {
+      // Handle other exceptions
+      throw new RuntimeException("Failed to update user profile: " + e.getMessage(), e);
+    }
   }
 
 
@@ -164,7 +195,6 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public Set<@Valid Address> handleGetAddresses(User user) {
-    Set<Address> addresses = user.getProfile().getAddresses();
-    return addresses;
+      return user.getProfile().getAddresses();
   }
 }

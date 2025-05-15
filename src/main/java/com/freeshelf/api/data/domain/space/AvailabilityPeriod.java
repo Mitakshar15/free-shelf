@@ -1,5 +1,8 @@
 package com.freeshelf.api.data.domain.space;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.freeshelf.api.data.domain.BaseEntity;
 import com.freeshelf.api.data.domain.user.User;
 import jakarta.persistence.*;
@@ -7,7 +10,6 @@ import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serial;
-import java.io.Serializable;
 import java.time.OffsetDateTime;
 
 
@@ -18,7 +20,7 @@ import java.time.OffsetDateTime;
 @Table(name = "availability_periods",
     indexes = {@Index(name = "idx_avail_space", columnList = "space_id"),
         @Index(name = "idx_avail_dates", columnList = "start_date,end_date")})
-public class AvailabilityPeriod extends BaseEntity implements Serializable {
+public class AvailabilityPeriod extends BaseEntity {
 
   @Serial
   private static final long serialVersionUID = 1L;
@@ -28,7 +30,9 @@ public class AvailabilityPeriod extends BaseEntity implements Serializable {
   @Column(name = "availability_period_id")
   private Long id;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.EAGER)
+  @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+  @JsonIdentityReference(alwaysAsId = true)
   @ToString.Exclude
   private StorageSpace space;
 

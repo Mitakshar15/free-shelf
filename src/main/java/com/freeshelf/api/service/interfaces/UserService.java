@@ -15,7 +15,7 @@ public interface UserService {
 
   User handleGetUserProfile(String authorization);
 
-  void handleUpdateUserProfile(User user, UpdateProfileRequest updateProfileRequest);
+  void handleUpdateUserProfile(String authorization, UpdateProfileRequest updateProfileRequest);
 
   void handleAddNewAddress(User user, AddNewAddressRequest addNewAddressRequest);
 

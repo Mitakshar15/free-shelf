@@ -71,7 +71,6 @@ public class StorageSpaceController implements StorageSpaceControllerV1Api {
     User user = userService.handleGetUserProfile(authorization);
     response.data(
         mapper.toSpaceImageDto(imageService.uploadImages(user, storageSpaceId, images, captions)));
-    imageService.uploadImages(user, storageSpaceId, images, captions);
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
 

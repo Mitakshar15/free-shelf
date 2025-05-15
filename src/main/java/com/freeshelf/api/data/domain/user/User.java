@@ -1,6 +1,8 @@
 package com.freeshelf.api.data.domain.user;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.freeshelf.api.data.domain.BaseEntity;
 import com.freeshelf.api.data.domain.space.StorageSpace;
 import com.freeshelf.api.utils.enums.AuthProvider;
@@ -12,7 +14,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serial;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,7 +25,7 @@ import java.util.Set;
 @Table(name = "users",
     indexes = {@Index(name = "idx_user_email", columnList = "email", unique = true),
         @Index(name = "idx_user_status_role", columnList = "status,role")})
-public class User extends BaseEntity implements Serializable {
+public class User extends BaseEntity {
 
   @Serial
   private static final long serialVersionUID = 1L;
@@ -61,7 +62,8 @@ public class User extends BaseEntity implements Serializable {
   private UserRole role;
 
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-  @JsonManagedReference
+  @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+  @JsonIdentityReference(alwaysAsId = true)
   private UserProfile profile;
 
   @Column(name = "last_login_at")
@@ -77,8 +79,6 @@ public class User extends BaseEntity implements Serializable {
   @Column(name = "provider_id")
   private String providerId;
 
-  @OneToMany(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<StorageSpace> spaces = new HashSet<>();
 
   @Override
   public boolean equals(Object o) {

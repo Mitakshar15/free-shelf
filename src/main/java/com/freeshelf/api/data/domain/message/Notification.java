@@ -1,5 +1,8 @@
 package com.freeshelf.api.data.domain.message;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.freeshelf.api.data.domain.BaseEntity;
 import com.freeshelf.api.data.domain.space.StorageSpace;
 import com.freeshelf.api.data.domain.user.User;
@@ -9,8 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import java.io.Serializable;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -22,7 +25,7 @@ import java.io.Serializable;
     indexes = {@Index(name = "idx_notification_user", columnList = "user_id"),
         @Index(name = "idx_notification_read", columnList = "is_read"),
         @Index(name = "idx_notification_created", columnList = "created_at")})
-public class Notification extends BaseEntity implements Serializable {
+public class Notification extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +34,9 @@ public class Notification extends BaseEntity implements Serializable {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
+  @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+  @JsonIdentityReference(alwaysAsId = true)
+  @ToString.Exclude
   private User user;
 
   @Column(nullable = false, length = 100)

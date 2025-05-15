@@ -1,5 +1,6 @@
 package com.freeshelf.api.service.impl;
 
+import com.freeshelf.api.data.domain.space.AvailabilityPeriod;
 import com.freeshelf.api.data.domain.space.StorageSpace;
 import com.freeshelf.api.data.domain.user.Address;
 import com.freeshelf.api.data.domain.user.User;
@@ -26,11 +27,10 @@ public class StorageServiceImpl implements StorageSpaceService {
 
 
   @Override
-//  @PreAuthorize("hasRole('ROLE_HOST')")
+  @PreAuthorize("hasRole('ROLE_HOST')")
   public StorageSpace handleCreateStorageSpace(User user,
       CreateStorageSpaceRequest createStorageSpaceRequest) {
-    // TODO: Handle The Storage Space Image Upload Functionality to Securely Store and Access the
-    // Images
+    // TODO: Handle The Storage Space Image Upload Functionality to actually Upload Images To Server
     StorageSpace space = mapper.toStorageSpaceEntity(createStorageSpaceRequest);
     Address address = addressRepository.findById(createStorageSpaceRequest.getAddressId())
         .orElseThrow(() -> new RuntimeException("Address not found"));
@@ -47,7 +47,7 @@ public class StorageServiceImpl implements StorageSpaceService {
   }
 
   @Override
-  // @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_RENTER','ROLE_ANONYMOUS')")
+  @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_RENTER','ROLE_ANONYMOUS')")
   public Set<StorageSpace> handleFindNearestStorageSpace(User user,
       FindNearestStorageSpaceRequest findNearestStorageSpaceRequest) {
     // TODO: implement Actual logic for finding nearest Location for given latitude and longitude

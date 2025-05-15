@@ -37,7 +37,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
       jwtToken = requestTokenHeader.substring(7);
       try {
-        userId = Long.valueOf(jwtTokenUtil.getUsernameFromToken(jwtToken));
+        userId = jwtTokenUtil.getUserIdFromToken(jwtToken);
       } catch (IllegalArgumentException e) {
         logger.error("Unable to get JWT Token");
       } catch (ExpiredJwtException e) {

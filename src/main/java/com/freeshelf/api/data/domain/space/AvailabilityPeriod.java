@@ -34,6 +34,7 @@ public class AvailabilityPeriod extends BaseEntity {
   @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
   @JsonIdentityReference(alwaysAsId = true)
   @ToString.Exclude
+  @JoinColumn(name = "space_id", nullable = false)
   private StorageSpace space;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

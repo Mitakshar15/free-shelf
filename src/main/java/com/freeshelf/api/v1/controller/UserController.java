@@ -28,8 +28,7 @@ public class UserController implements UserControllerV1Api {
       UpdateProfileRequest updateProfileRequest) throws Exception {
     FreeShelfApiBaseApiResponse response = mapper.toUserMgmtBaseApiResponse(
         apiResponseBuilder.buildSuccessApiResponse(Constants.UPDATE_USER_PROFILE_SUCCESS_MESSAGE));
-    User user = userService.handleGetUserProfile(authorization);
-    userService.handleUpdateUserProfile(user, updateProfileRequest);
+    userService.handleUpdateUserProfile(authorization, updateProfileRequest);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
@@ -66,8 +65,8 @@ public class UserController implements UserControllerV1Api {
       EditAddressRequest editAddressRequest) throws Exception {
     FreeShelfApiBaseApiResponse response = mapper.toUserMgmtBaseApiResponse(
         apiResponseBuilder.buildSuccessApiResponse(Constants.EDIT_ADDRESS_SUCCESS_MESSAGE));
-    String userName = jwtTokenUtil.getUsernameFromToken(authorization);
-    userService.handleEditAddress(editAddressRequest);
+    User user = userService.handleGetUserProfile(authorization);
+    userService.handleEditAddress(editAddressRequest,user);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 

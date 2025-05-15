@@ -15,13 +15,13 @@ public interface UserService {
 
   User handleGetUserProfile(String authorization);
 
-  void handleUpdateUserProfile(User user, UpdateProfileRequest updateProfileRequest);
+  void handleUpdateUserProfile(String authorization, UpdateProfileRequest updateProfileRequest);
 
   void handleAddNewAddress(User user, AddNewAddressRequest addNewAddressRequest);
 
   void handleDeleteAddress(User user, Long addressId);
 
-  void handleEditAddress(EditAddressRequest editAddressRequest);
+  void handleEditAddress(EditAddressRequest editAddressRequest,User user);
 
   Set<@Valid Address> handleGetAddresses(User user);
 }

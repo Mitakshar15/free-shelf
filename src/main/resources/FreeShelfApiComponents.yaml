@@ -372,6 +372,20 @@ components:
             type: string
             enum: [ CLIMATE_CONTROLLED, SECURITY_CAMERA, TWENTY_FOUR_HOUR_ACCESS, DRIVE_UP_ACCESS, INDOOR, OUTDOOR, LOCKED, SHELVING, ELECTRICITY, LIGHTING, ALARM_SYSTEM]
           description: List of features available in the storage space
+        availabilityPeriod:
+          type: object
+          properties:
+            startDate:
+              type: string
+              format: date-time
+              x-java-type: java.time.LocalDateTime
+              description: Start date and time of availability
+            endDate:
+              type: string
+              format: date-time
+              x-java-type: java.time.LocalDateTime
+              description: End date and time of availability
+
 
     StorageSpaceDto:
       type: object
@@ -438,10 +452,9 @@ components:
           items:
             $ref: '#/components/schemas/SpaceImageDto'
           description: List of images associated with the storage space
-        availabilityPeriods:
-          type: array
-          items:
-            $ref: '#/components/schemas/AvailabilityPeriodDto'
+        availabilityPeriod:
+          type: object
+          $ref: "#/components/schemas/AvailabilityPeriodDto"
           description: List of availability periods for the storage space
         ratings:
           type: array
@@ -502,11 +515,11 @@ components:
           description: ID of the associated storage space
         startDate:
           type: string
-          format: local-date-time
+          format: date-time
           description: Start date and time of availability
         endDate:
           type: string
-          format: local-date-time
+          format: date-time
           description: End date and time of availability
         version:
           type: integer
@@ -628,32 +641,31 @@ components:
       properties:
         data:
           type: array
+          uniqueItems: true
           items:
             $ref: '#/components/schemas/StorageSpaceDto'
       allOf:
         - $ref: "#/components/schemas/FreeShelfApiBaseApiResponse"
 
-    CreateStorageSpaceImageRequest:
+    SpaceImageResponse:
       type: object
       properties:
-        images:
+        data:
           type: array
           items:
-            properties:
-              spaceId:
-                type: integer
-                format: int64
-                description: ID of the associated storage space
-              imageUrl:
-                type: string
-                description: URL of the image
-              caption:
-                type: string
-                maxLength: 200
-                description: Optional caption for the image
-              primary:
-                type: boolean
-                description: Indicates if this is the primary image
+            $ref: '#/components/schemas/SpaceImageDto'
+      allOf:
+        - $ref: "#/components/schemas/FreeShelfApiBaseApiResponse"
+
+    FindNearestStorageSpaceRequest:
+      type: object
+      properties:
+        latitude:
+          type: number
+        longitude:
+          type: number
+        radius:
+          type: number
 
 
 

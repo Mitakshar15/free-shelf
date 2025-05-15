@@ -84,7 +84,7 @@ paths:
               schema:
                 $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
 
-  /v1/storagespace/addImages:
+  /v1/storagespace/addImages/{storageSpaceId}:
     post:
       tags:
         - storage space controller v1
@@ -97,20 +97,37 @@ paths:
           required: true
           schema:
             type: string
+        - in: path
+          name: storageSpaceId
+          schema:
+            type: integer
+            format: int64
+          required: true
       requestBody:
-        description: Add New Storage Space Image
-        content:
-          application/json:
-            schema:
-              $ref: './FreeShelfApiComponents.yaml#/components/schemas/CreateStorageSpaceImageRequest'
         required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: Image files to upload (up to 5 images)
+                captions:
+                  type: array
+                  items:
+                    type: string
+                  description: Captions for each image in the same order (optional)
       responses:
         '201':
           description: "Add New Storage Space Image Success"
           content:
             application/json:
               schema:
-                $ref: './FreeShelfApiComponents.yaml#/components/schemas/StorageSpaceResponse'
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/SpaceImageResponse'
         '422':
           description: "Add New Storage Space Image Request is valid but the service was not able to process it ..."
           content:
@@ -123,3 +140,62 @@ paths:
             application/json:
               schema:
                 $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+
+  /v1/storagespace/{spaceId}/images/{imageId}:
+    put:
+      operationId: setImageAsPrimary
+      summary: Set a specific image as the primary image
+      tags:
+        - storage space controller v1
+      parameters:
+        - name: spaceId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: imageId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Image successfully set as primary
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/SpaceImageResponse'
+        '404':
+          description: Space or image not found
+
+  /v1/storagespace/find:
+    post:
+      operationId: findNearestStorageSpace
+      summary: Find Nearest Storage Space Available for User
+      tags:
+        - storage space controller v1
+      parameters:
+        - in: header
+          name: "Authorization"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './FreeShelfApiComponents.yaml#/components/schemas/FindNearestStorageSpaceRequest'
+      responses:
+        '200':
+          description: Storage Space successfully found
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/StorageSpaceResponse'
+        '404':
+          description: Space  not found
+
+

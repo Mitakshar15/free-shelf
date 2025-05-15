@@ -1,10 +1,14 @@
 package com.freeshelf.api.data.domain.user;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.freeshelf.api.data.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 
 
@@ -14,6 +18,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Entity
 public class Address extends BaseEntity {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,8 +54,11 @@ public class Address extends BaseEntity {
   @Column(precision = 10, scale = 7)
   private BigDecimal longitude;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "user_profile_id", nullable = false)
+  @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+  @JsonIdentityReference(alwaysAsId = true)
   @ToString.Exclude
   private UserProfile userProfile;
+
 }

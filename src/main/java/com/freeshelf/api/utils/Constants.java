@@ -14,5 +14,12 @@ public class Constants {
   public static final String GET_ADDRESS_SUCCUESS_MESSAGE = "get.address.success.message";;
   public static final String CREATE_STORAGE_SPACE_SUCCESS_MESSAGE =
       "create.storage.space.success.message";;
-  public static final String GET_STORAGE_SPACE_SUCCESS_MESSAGE ="get.storage.space.success.message"; ;
+  public static final String GET_STORAGE_SPACE_SUCCESS_MESSAGE =
+      "get.storage.space.success.message";;
+  public static final String ADD_STORAGE_SPACE_IMAGES_SUCCESS_MESSAGE =
+      "add.storage.space.images.success.message";
+  public static final String SET_IMAGE_AS_PRIMARY_SUCCESS_MESSAGE =
+      "set.image.as.primary.success.message";;;
+  public static final String FIND_NEAREST_STORAGE_SPACE_SUCCESS_MESSAGE =
+      "find.nearest.storage.space.success.message";;
 }

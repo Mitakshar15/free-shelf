@@ -42,9 +42,6 @@ public class UserServiceImpl implements UserService {
   private final PasswordEncoder passwordEncoder;
   private final UserProfileRepository userProfileRepository;
   private final AddressRepository addressRepository;
-  
-  @PersistenceContext
-  private EntityManager entityManager;
 
   @Override
   public AuthResponseDto handleSignIn(SignInRequest signInRequest) {
@@ -123,24 +120,12 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public void handleUpdateUserProfile(String authorization, UpdateProfileRequest updateProfileRequest) {
-    try {
-      Long userId = jwtTokenUtil.getUserIdFromToken(authorization);
-      User user = userRepository.findById(userId)
-          .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
-      user.setFirstName(updateProfileRequest.getFirstName());
-      user.setLastName(updateProfileRequest.getLastName());
-      if (user.getProfile() != null) {
-        user.getProfile().setBio(updateProfileRequest.getBio());
-        user.getProfile().setProfileImageUrl(updateProfileRequest.getProfileImageUrl());
-      }
-      User updatedUser = userRepository.save(user);
-      entityManager.refresh(updatedUser);
-
-    } catch (org.springframework.orm.ObjectOptimisticLockingFailureException e) {
-      throw new RuntimeException("Could not update profile due to concurrent modification. Please try again.", e);
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to update user profile: " + e.getMessage(), e);
-    }
+    User user = handleGetUserProfile(authorization);
+    user.setFirstName(updateProfileRequest.getFirstName());
+    user.setLastName(updateProfileRequest.getLastName());
+    user.getProfile().setBio(updateProfileRequest.getBio());
+    user.getProfile().setProfileImageUrl(updateProfileRequest.getProfileImageUrl());
+    userRepository.save(user);
   }
 
 

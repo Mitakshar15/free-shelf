@@ -54,12 +54,6 @@ public class CacheConfig {
     return template;
   }
 
-  // @Bean
-  // public ObjectMapper objectMapper() {
-  // ObjectMapper mapper = new ObjectMapper();
-  // mapper.registerModule(new JavaTimeModule()); // Support Java 8 date/time types
-  // return mapper;
-  // }
   @Bean
   public ObjectMapper objectMapper() {
     ObjectMapper mapper = new ObjectMapper();

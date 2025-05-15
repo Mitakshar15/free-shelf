@@ -21,7 +21,7 @@ public interface UserService {
 
   void handleDeleteAddress(User user, Long addressId);
 
-  void handleEditAddress(EditAddressRequest editAddressRequest);
+  void handleEditAddress(EditAddressRequest editAddressRequest,User user);
 
   Set<@Valid Address> handleGetAddresses(User user);
 }

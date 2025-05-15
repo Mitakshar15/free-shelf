@@ -25,6 +25,7 @@ public interface UserMgmtMapper {
 
   Address toAddressEntity(AddNewAddressRequest addNewAddressRequest);
 
+
   Address toAddressEntity(EditAddressRequest editAddressRequest);
 
   AddressResponse toAddressResponse(BaseApiResponse baseApiResponse);

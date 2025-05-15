@@ -26,7 +26,7 @@ public class StorageServiceImpl implements StorageSpaceService {
 
 
   @Override
-  @PreAuthorize("hasRole('ROLE_HOST')")
+//  @PreAuthorize("hasRole('ROLE_HOST')")
   public StorageSpace handleCreateStorageSpace(User user,
       CreateStorageSpaceRequest createStorageSpaceRequest) {
     // TODO: Handle The Storage Space Image Upload Functionality to Securely Store and Access the
@@ -42,7 +42,6 @@ public class StorageServiceImpl implements StorageSpaceService {
   }
 
   @Override
-  @PreAuthorize("isAuthenticated()")
   public Set<StorageSpace> handleGetStorageSpaces(User user) {
     return storageSpaceRepository.findByHost(user).orElse(Set.of());
   }

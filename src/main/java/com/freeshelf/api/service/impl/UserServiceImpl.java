@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
     SecurityContextHolder.getContext().setAuthentication(authentication);
     UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
     String jwt = jwtTokenUtil.generateToken(userPrincipal);
-    User user = userRepository.findById(userPrincipal.getId()).get();
+    User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() -> new RuntimeException("User not found"));
     user.setLastLoginAt(LocalDateTime.now());
     userRepository.save(user);
     AuthResponseDto authResponseDto = new AuthResponseDto();
@@ -102,11 +102,9 @@ public class UserServiceImpl implements UserService {
     // Create User Profile
     UserProfile profile = new UserProfile();
     profile.setUser(user);
-    // UserProfile savedProfile = userProfileRepository.save(profile);
     user.setProfile(profile);
     User savedUser = userRepository.save(user);
 
-    // Generate Jwt for immediate login
     String jwt = jwtTokenUtil.generateTokenFromUser(savedUser);
     AuthResponseDto authResponseDto = new AuthResponseDto();
     authResponseDto.setToken(jwt);
@@ -126,34 +124,21 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public void handleUpdateUserProfile(String authorization, UpdateProfileRequest updateProfileRequest) {
     try {
-      // Extract user ID from token
       Long userId = jwtTokenUtil.getUserIdFromToken(authorization);
-      
-      // Get the user entity
       User user = userRepository.findById(userId)
           .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
-
-      // Update user fields
       user.setFirstName(updateProfileRequest.getFirstName());
       user.setLastName(updateProfileRequest.getLastName());
-      
-      // Update profile fields
       if (user.getProfile() != null) {
         user.getProfile().setBio(updateProfileRequest.getBio());
         user.getProfile().setProfileImageUrl(updateProfileRequest.getProfileImageUrl());
       }
-      
-      // Save the updated user to the database
       User updatedUser = userRepository.save(user);
-      
-      // Refresh the entity in the persistence context to ensure cache is updated
       entityManager.refresh(updatedUser);
 
     } catch (org.springframework.orm.ObjectOptimisticLockingFailureException e) {
-      // Handle optimistic locking exception specifically
       throw new RuntimeException("Could not update profile due to concurrent modification. Please try again.", e);
     } catch (Exception e) {
-      // Handle other exceptions
       throw new RuntimeException("Failed to update user profile: " + e.getMessage(), e);
     }
   }
@@ -179,8 +164,11 @@ public class UserServiceImpl implements UserService {
   @Override
   public void handleDeleteAddress(User user, Long addressId) {
     try {
-      user.getProfile().getAddresses().remove(addressRepository.findById(addressId)
-          .orElseThrow(() -> new RuntimeException("Address not found")));
+      Address address = addressRepository.findById(addressId)
+          .orElseThrow(() -> new RuntimeException("Address not found with ID: " + addressId));
+      UserProfile profile = user.getProfile();
+      profile.getAddresses().remove(address);
+      address.setUserProfile(null);
       userRepository.save(user);
     } catch (Exception e) {
       throw new RuntimeException("Address not found");
@@ -188,13 +176,41 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void handleEditAddress(EditAddressRequest editAddressRequest) {
-    Address address = mapper.toAddressEntity(editAddressRequest);
-    addressRepository.save(address);
+  @Transactional
+  public void handleEditAddress(EditAddressRequest editAddressRequest, User user) {
+    try {
+      Long addressId = editAddressRequest.getId().longValue();
+      Address existingAddress = addressRepository.findById(addressId)
+          .orElseThrow(() -> new RuntimeException("Address not found with ID: " + addressId));
+      if (existingAddress.getUserProfile() == null ||
+          !existingAddress.getUserProfile().getId().equals(user.getProfile().getId())) {
+        throw new RuntimeException("Address does not belong to the current user");
+      }
+      existingAddress.setStreet(editAddressRequest.getStreet());
+      existingAddress.setCity(editAddressRequest.getCity());
+      existingAddress.setState(editAddressRequest.getState());
+      existingAddress.setZipCode(editAddressRequest.getZipCode());
+      existingAddress.setCountry(editAddressRequest.getCountry());
+      if (editAddressRequest.getAddressLine1() != null) {
+        existingAddress.setAddressLine1(editAddressRequest.getAddressLine1());
+      }
+      if (editAddressRequest.getAddressLine2() != null) {
+        existingAddress.setAddressLine2(editAddressRequest.getAddressLine2());
+      }
+      addressRepository.save(existingAddress);
+      userRepository.save(user);
+      // Refresh the entity in the persistence context
+      //entityManager.refresh(updatedAddress);
+
+    } catch (org.springframework.orm.ObjectOptimisticLockingFailureException e) {
+      throw new RuntimeException("Could not update address due to concurrent modification. Please try again.", e);
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to update address: " + e.getMessage(), e);
+    }
   }
 
   @Override
   public Set<@Valid Address> handleGetAddresses(User user) {
-      return user.getProfile().getAddresses();
+      return addressRepository.findAllByUserProfile(user.getProfile());
   }
 }

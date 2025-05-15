@@ -24,7 +24,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 
   @Query("select u from User u where u.email=:userName or u.userName=:userName")
-  @Cacheable(value = "user", key = "#userName")
   Optional<User> findByEmailOrUserName(@Param("userName") String userName);
 
   @Override
@@ -32,7 +31,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
   Optional<User> findById(Long id);
 
   @Override
-  @CachePut(value = "user", key = "#user")
+  @CachePut(value = "user", key = "#user.id")
   <S extends User> S save(S user);
 
 

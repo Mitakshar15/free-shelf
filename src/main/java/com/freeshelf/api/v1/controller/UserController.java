@@ -28,7 +28,6 @@ public class UserController implements UserControllerV1Api {
       UpdateProfileRequest updateProfileRequest) throws Exception {
     FreeShelfApiBaseApiResponse response = mapper.toUserMgmtBaseApiResponse(
         apiResponseBuilder.buildSuccessApiResponse(Constants.UPDATE_USER_PROFILE_SUCCESS_MESSAGE));
-    User user = userService.handleGetUserProfile(authorization);
     userService.handleUpdateUserProfile(authorization, updateProfileRequest);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }

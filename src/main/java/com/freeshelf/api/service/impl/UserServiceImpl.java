@@ -112,8 +112,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User handleGetUserProfile(String authorization) {
-    String userId = jwtTokenUtil.getUsernameFromToken(authorization);
-    return userRepository.findByEmailOrUserName(userId)
+    Long userId = jwtTokenUtil.getUserIdFromToken(authorization);
+    return userRepository.findById(userId)
         .orElseThrow(() -> new RuntimeException("User not found"));
   }
 
@@ -122,10 +122,10 @@ public class UserServiceImpl implements UserService {
   public void handleUpdateUserProfile(String authorization, UpdateProfileRequest updateProfileRequest) {
     try {
       // Extract user ID from token
-      String userName = jwtTokenUtil.getUsernameFromToken(authorization);
+      Long userId = jwtTokenUtil.getUserIdFromToken(authorization);
 
-      User user = userRepository.findByEmailOrUserName(userName)
-          .orElseThrow(() -> new RuntimeException("User not found"));
+      User user = userRepository.findById(userId)
+          .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
       user.setFirstName(updateProfileRequest.getFirstName());
       user.setLastName(updateProfileRequest.getLastName());
@@ -141,6 +141,7 @@ public class UserServiceImpl implements UserService {
       
       // Clear the persistence context to ensure fresh entities on subsequent calls
       userRepository.flush();
+
     } catch (org.springframework.orm.ObjectOptimisticLockingFailureException e) {
       // Handle optimistic locking exception specifically
       // This is a more targeted approach to the specific exception we're seeing
@@ -188,7 +189,6 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public Set<@Valid Address> handleGetAddresses(User user) {
-    Set<Address> addresses = user.getProfile().getAddresses();
-    return addresses;
+      return user.getProfile().getAddresses();
   }
 }

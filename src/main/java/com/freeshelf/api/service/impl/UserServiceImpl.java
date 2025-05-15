@@ -199,8 +199,6 @@ public class UserServiceImpl implements UserService {
       }
       addressRepository.save(existingAddress);
       userRepository.save(user);
-      // Refresh the entity in the persistence context
-      //entityManager.refresh(updatedAddress);
 
     } catch (org.springframework.orm.ObjectOptimisticLockingFailureException e) {
       throw new RuntimeException("Could not update address due to concurrent modification. Please try again.", e);

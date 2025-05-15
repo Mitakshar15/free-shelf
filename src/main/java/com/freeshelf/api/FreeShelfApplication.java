@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 @EnableTransactionManagement
 @EntityScan("com.freeshelf.api.data.domain")
-@EnableCaching
 public class FreeShelfApplication {
 
   public static void main(String[] args) {

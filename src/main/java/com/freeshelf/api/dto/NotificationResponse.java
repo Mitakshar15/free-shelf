@@ -17,7 +17,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NotificationResponse {
-    private List<Notification> notifications;
-    private long unreadCount;
-    private Map<String, String> message;
+  private List<Notification> notifications;
+  private long unreadCount;
+  private Map<String, String> message;
 }

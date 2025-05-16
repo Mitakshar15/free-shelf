@@ -19,29 +19,28 @@ import java.io.InputStream;
 @Slf4j
 public class FirebaseConfig {
 
-    @Value("${firebase.config.path:firebase-service-account.json}")
-    private String firebaseConfigPath;
+  @Value("${firebase.config.path}")
+  private String firebaseConfigPath;
 
-    /**
-     * Initialize Firebase Admin SDK with service account credentials
-     */
-    @PostConstruct
-    public void initialize() {
-        try {
-            if (FirebaseApp.getApps().isEmpty()) {
-                InputStream serviceAccount = new ClassPathResource(firebaseConfigPath).getInputStream();
-                
-                FirebaseOptions options = FirebaseOptions.builder()
-                        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                        .build();
-                
-                FirebaseApp.initializeApp(options);
-                log.info("Firebase application has been initialized");
-            }
-        } catch (IOException e) {
-            log.error("Error initializing Firebase: {}", e.getMessage());
-            // Continue without Firebase if configuration is not available
-            log.warn("Firebase initialization skipped. Push notifications will not be available.");
-        }
+  /**
+   * Initialize Firebase Admin SDK with service account credentials
+   */
+  @PostConstruct
+  public void initialize() {
+    try {
+      if (FirebaseApp.getApps().isEmpty()) {
+        InputStream serviceAccount = new ClassPathResource(firebaseConfigPath).getInputStream();
+
+        FirebaseOptions options = FirebaseOptions.builder()
+            .setCredentials(GoogleCredentials.fromStream(serviceAccount)).build();
+
+        FirebaseApp.initializeApp(options);
+        log.info("Firebase application has been initialized");
+      }
+    } catch (IOException e) {
+      log.error("Error initializing Firebase: {}", e.getMessage());
+      // Continue without Firebase if configuration is not available
+      log.warn("Firebase initialization skipped. Push notifications will not be available.");
     }
+  }
 }

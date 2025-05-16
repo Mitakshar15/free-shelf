@@ -13,27 +13,27 @@ import java.util.Optional;
  */
 @Repository
 public interface DeviceTokenRepository extends JpaRepository<DeviceToken, Long> {
-    
-    /**
-     * Find all active device tokens for a user
-     * 
-     * @param user the user to find tokens for
-     * @return list of active device tokens
-     */
-    List<DeviceToken> findByUserAndActiveTrue(User user);
-    
-    /**
-     * Find a device token by its token value
-     * 
-     * @param token the token value
-     * @return optional containing the device token if found
-     */
-    Optional<DeviceToken> findByToken(String token);
-    
-    /**
-     * Delete all device tokens for a user
-     * 
-     * @param user the user to delete tokens for
-     */
-    void deleteAllByUser(User user);
+
+  /**
+   * Find all active device tokens for a user
+   *
+   * @param user the user to find tokens for
+   * @return list of active device tokens
+   */
+  List<DeviceToken> findByUserAndActiveTrue(User user);
+
+  /**
+   * Find a device token by its token value
+   *
+   * @param token the token value
+   * @return optional containing the device token if found
+   */
+  Optional<DeviceToken> findByToken(String token);
+
+  /**
+   * Delete all device tokens for a user
+   *
+   * @param user the user to delete tokens for
+   */
+  void deleteAllByUser(User user);
 }

@@ -51,23 +51,27 @@ public class BookingController implements BookingControllerV1Api {
   public ResponseEntity<FreeShelfApiBaseApiResponse> payForStorageSpace(String authorization,
       BookingRequest bookingRequest) throws Exception {
     return BookingControllerV1Api.super.payForStorageSpace(authorization, bookingRequest);
-    //TODO: handle payment properly, i.e set p autopay after the Booking Ends.
+    // TODO: handle payment properly, i.e set p autopay after the Booking Ends.
   }
 
 
   @Override
-  public ResponseEntity<FreeShelfApiBaseApiResponse> acceptStorageSpaceBookings(String authorization, Long bookingId) throws Exception {
+  public ResponseEntity<FreeShelfApiBaseApiResponse> acceptStorageSpaceBookings(
+      String authorization, Long bookingId) throws Exception {
     Long userId = jwtTokenUtil.getUserIdFromToken(authorization);
-    bookingService.handleAcceptBooking(bookingId,userId);
-    FreeShelfApiBaseApiResponse response = mapper.toBaseApiResponse(apiResponseBuilder.buildSuccessApiResponse(Constants.ACCEPT_STORAGE_SPACE_BOOKING_SUCCESS_MESSAGE));
+    bookingService.handleAcceptBooking(bookingId, userId);
+    FreeShelfApiBaseApiResponse response = mapper.toBaseApiResponse(apiResponseBuilder
+        .buildSuccessApiResponse(Constants.ACCEPT_STORAGE_SPACE_BOOKING_SUCCESS_MESSAGE));
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<FreeShelfApiBaseApiResponse> rejectStorageSpaceBookings(String authorization, Long bookingId) throws Exception {
+  public ResponseEntity<FreeShelfApiBaseApiResponse> rejectStorageSpaceBookings(
+      String authorization, Long bookingId) throws Exception {
     Long userId = jwtTokenUtil.getUserIdFromToken(authorization);
-    bookingService.handleRejectBooking(bookingId,userId);
-    FreeShelfApiBaseApiResponse response = mapper.toBaseApiResponse(apiResponseBuilder.buildSuccessApiResponse(Constants.ACCEPT_STORAGE_SPACE_BOOKING_SUCCESS_MESSAGE));
+    bookingService.handleRejectBooking(bookingId, userId);
+    FreeShelfApiBaseApiResponse response = mapper.toBaseApiResponse(apiResponseBuilder
+        .buildSuccessApiResponse(Constants.ACCEPT_STORAGE_SPACE_BOOKING_SUCCESS_MESSAGE));
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 }

@@ -50,7 +50,7 @@ public class BookingServiceImpl implements BookingService {
     if (bookingUtils.checkAvailability(bookingRequest.getStartDate(), bookingRequest.getEndDate(),
         space)) {
       booking = bookingRepository.save(booking);
-      
+
       // Send notification to the host about the new booking request
       notificationService.sendBookingRequestNotification(booking);
       log.info("Created new booking with ID: {} and sent notification to host", booking.getId());
@@ -72,14 +72,14 @@ public class BookingServiceImpl implements BookingService {
   public void handleRejectBooking(Long bookingId, Long userId) {
     Booking booking = bookingRepository.findById(bookingId)
         .orElseThrow(() -> new RuntimeException("Booking not found"));
-    if(!Objects.equals(userId, booking.getSpace().getHost().getId())){
+    if (!Objects.equals(userId, booking.getSpace().getHost().getId())) {
       throw new RuntimeException("You are not the host of this space");
     }
     booking.setStatus(BookingStatus.REJECTED);
     booking.setStatusUpdatedAt(LocalDateTime.now());
     booking.getSpace().setStatus(SpaceStatus.ACTIVE);
     booking = bookingRepository.save(booking);
-    
+
     // Send notification to the renter about the rejected booking
     notificationService.sendBookingStatusUpdateNotification(booking);
     log.info("Rejected booking with ID: {} and sent notification to renter", booking.getId());
@@ -91,14 +91,14 @@ public class BookingServiceImpl implements BookingService {
   public void handleAcceptBooking(Long bookingId, Long userId) {
     Booking booking = bookingRepository.findById(bookingId)
         .orElseThrow(() -> new RuntimeException("Booking not found"));
-    if(!Objects.equals(userId, booking.getSpace().getHost().getId())){
+    if (!Objects.equals(userId, booking.getSpace().getHost().getId())) {
       throw new RuntimeException("You are not the host of this space");
     }
     booking.getSpace().setStatus(SpaceStatus.BOOKED);
     booking.setStatus(BookingStatus.APPROVED);
     booking.setStatusUpdatedAt(LocalDateTime.now());
     booking = bookingRepository.save(booking);
-    
+
     // Send notification to the renter about the approved booking
     notificationService.sendBookingStatusUpdateNotification(booking);
     log.info("Approved booking with ID: {} and sent notification to renter", booking.getId());
@@ -111,14 +111,14 @@ public class BookingServiceImpl implements BookingService {
   public void handleCancelBooking(Long bookingId, Long userId) {
     Booking booking = bookingRepository.findById(bookingId)
         .orElseThrow(() -> new RuntimeException("Booking not found"));
-    if(!Objects.equals(userId, booking.getRenter().getId())){
+    if (!Objects.equals(userId, booking.getRenter().getId())) {
       throw new RuntimeException("You are not the renter of this booking");
     }
     booking.setStatus(BookingStatus.CANCELLED);
     booking.setStatusUpdatedAt(LocalDateTime.now());
     booking.getSpace().setStatus(SpaceStatus.ACTIVE);
     booking = bookingRepository.save(booking);
-    
+
     // Send notification to the host about the cancelled booking
     notificationService.sendBookingStatusUpdateNotification(booking);
     log.info("Cancelled booking with ID: {} and sent notification to host", booking.getId());

@@ -9,7 +9,6 @@ import com.freeshelf.api.utils.enums.SpaceStatus;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.producr.api.dtos.BookingRequest;
 import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
@@ -24,19 +23,14 @@ public class BookingUtils {
 
   public boolean checkAvailability(OffsetDateTime startDate, OffsetDateTime endDate,
       StorageSpace space) {
-    // Check if the space is in an available status
     if (space.getStatus() != SpaceStatus.ACTIVE) {
       throw new IllegalStateException("Storage space is not currently active for booking");
     }
-
-    // Check if the requested dates are valid
 
     if (startDate == null || endDate == null || startDate.isAfter(endDate)) {
       throw new IllegalArgumentException(
           "Invalid booking dates: start date must be before end date");
     }
-
-    // Check if the dates are within the space's availability period
     AvailabilityPeriod availabilityPeriod = space.getAvailabilityPeriod();
     if (availabilityPeriod != null) {
       OffsetDateTime spaceStartDate = availabilityPeriod.getStartDate();
@@ -50,12 +44,9 @@ public class BookingUtils {
         throw new IllegalArgumentException("Requested end date is after space availability period");
       }
     }
-
-    // Find any bookings for this space that overlap with the requested period
     List<Booking> overlappingBookings = bookingRepository.findOverlappingBookings(space.getId(),
         BookingStatus.CANCELLED, BookingStatus.REJECTED, startDate, endDate);
 
-    // Space is available only if there are no overlapping bookings
     return overlappingBookings.isEmpty();
   }
 
@@ -71,17 +62,11 @@ public class BookingUtils {
       throw new IllegalArgumentException("Start date must be before end date");
     }
 
-    // Calculate the duration in days
     long durationInDays = ChronoUnit.DAYS.between(startDate, endDate) + 1; // +1 to include both
                                                                            // start and end days
-
-    // Calculate the price per day (pricePerMonth / 30)
     double pricePerDay = pricePerMonth / 30.0;
-
-    // Calculate total price (days * price per day)
     double totalPrice = durationInDays * pricePerDay;
 
-    // Round to the nearest whole number and return as Long
     return Math.round(totalPrice);
   }
 

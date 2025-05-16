@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -56,9 +57,12 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @PreAuthorize("hasRole('ROLE_HOST')")
-  public void handleRejectBooking(Long bookingId) {
+  public void handleRejectBooking(Long bookingId,Long userId) {
     Booking booking = bookingRepository.findById(bookingId)
         .orElseThrow(() -> new RuntimeException("Booking not found"));
+    if(!Objects.equals(userId, booking.getSpace().getHost().getId())){
+      throw new RuntimeException("You are not the host of this space");
+    }
     booking.setStatus(BookingStatus.REJECTED);
     booking.setStatusUpdatedAt(LocalDateTime.now());
     booking.getSpace().setStatus(SpaceStatus.ACTIVE);
@@ -67,11 +71,13 @@ public class BookingServiceImpl implements BookingService {
 
   @Override
   @PreAuthorize("hasRole('ROLE_HOST')")
-  public void handleAcceptBooking(Long bookingId) {
+  public void handleAcceptBooking(Long bookingId,Long userId) {
     Booking booking = bookingRepository.findById(bookingId)
         .orElseThrow(() -> new RuntimeException("Booking not found"));
-    StorageSpace space = booking.getSpace();
-    space.setStatus(SpaceStatus.BOOKED);
+    if(!Objects.equals(userId, booking.getSpace().getHost().getId())){
+      throw new RuntimeException("You are not the host of this space");
+    }
+    booking.getSpace().setStatus(SpaceStatus.BOOKED);
     booking.setStatus(BookingStatus.APPROVED);
     booking.setStatusUpdatedAt(LocalDateTime.now());
     bookingRepository.save(booking);
@@ -80,9 +86,12 @@ public class BookingServiceImpl implements BookingService {
 
   @Override
   @PreAuthorize("hasRole('ROLE_RENTER')")
-  public void handleCancelBooking(Long bookingId) {
+  public void handleCancelBooking(Long bookingId,Long userId) {
     Booking booking = bookingRepository.findById(bookingId)
         .orElseThrow(() -> new RuntimeException("Booking not found"));
+    if(!Objects.equals(userId, booking.getRenter().getId())){
+      throw new RuntimeException("You are not the host of this space");
+    }
     booking.setStatus(BookingStatus.CANCELLED);
     bookingRepository.save(booking);
     booking.getSpace().setStatus(SpaceStatus.ACTIVE);

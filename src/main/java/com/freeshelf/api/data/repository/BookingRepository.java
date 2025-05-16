@@ -16,17 +16,7 @@ import java.util.Set;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-  /**
-   * Find bookings for a specific space that overlap with the given date range and are not in the
-   * specified statuses
-   *
-   * @param spaceId The ID of the storage space
-   * @param excludedStatus1 First status to exclude from results
-   * @param excludedStatus2 Second status to exclude from results
-   * @param startDate Start date of the requested booking period
-   * @param endDate End date of the requested booking period
-   * @return List of overlapping bookings
-   */
+
   @Query("SELECT b FROM Booking b WHERE b.space.id = :spaceId AND b.status NOT IN (:excludedStatus1, :excludedStatus2) AND "
       + "((b.startDate <= :endDate) AND (b.endDate >= :startDate))")
   List<Booking> findOverlappingBookings(@Param("spaceId") Long spaceId,

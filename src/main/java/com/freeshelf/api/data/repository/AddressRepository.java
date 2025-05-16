@@ -18,12 +18,11 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
 
 
 
+  @Query("select ad from  Address ad where ad.userProfile=:userProfile")
+  Set<@Valid Address> findAllByUserProfile(@Param("userProfile") UserProfile userProfile);
 
-    @Query("select ad from  Address ad where ad.userProfile=:userProfile")
-    Set<@Valid Address> findAllByUserProfile(@Param("userProfile") UserProfile userProfile);
-
-    @Override
-    @CacheEvict(value = "address", key = "#address.id")
-    void delete(Address address);
+  @Override
+  @CacheEvict(value = "address", key = "#address.id")
+  void delete(Address address);
 
 }

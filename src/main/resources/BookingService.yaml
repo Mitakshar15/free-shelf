@@ -1,0 +1,210 @@
+openapi: 3.0.3
+info:
+  title: Free Shelf Booking Services - OpenAPI 3.0
+  description: |-
+    Free Shelf API Spec
+  version: 0.0.1
+  contact:
+    name: API Support
+    email: work.mitakshar@gmail.com
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Free Shelf api  v1
+    description: Free Shelf - Online Free Storage Rental Service
+paths:
+  /v1/storagespace/booking:
+    post:
+      tags:
+        - booking controller v1
+      summary: Book Storage Space
+      description: Book a Storage Space
+      operationId: bookStorageSpace
+      parameters:
+        - in: header
+          name: "Authorization"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Book a Storage Space
+        content:
+          application/json:
+            schema:
+              $ref: './FreeShelfApiComponents.yaml#/components/schemas/BookingRequest'
+        required: true
+      responses:
+        '201':
+          description: "Book  Storage Space Success"
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '422':
+          description: "Book  Storage Space Request is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '400':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+    put:
+      tags:
+        - booking controller v1
+      summary: Pay for Storage Space Booking
+      description: Pay for Storage Space Booking
+      operationId: payForStorageSpace
+      parameters:
+        - in: header
+          name: "Authorization"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Book a Storage Space
+        content:
+          application/json:
+            schema:
+              $ref: './FreeShelfApiComponents.yaml#/components/schemas/BookingRequest'
+        required: true
+      responses:
+        '201':
+          description: "Book  Storage Space Success"
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '422':
+          description: "Book  Storage Space Request is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '400':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+
+  /v1/storagespace/booking/{spaceId}:
+    get:
+      tags:
+        - booking controller v1
+      summary: Get Bookings for Storage Space
+      description: Get Bookings for Storage Space
+      operationId: getStorageSpaceBookings
+      parameters:
+        - in: header
+          name: "Authorization"
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: "spaceId"
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '201':
+          description: "Get Bookings for Storage Space Success"
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/BookingResponse'
+        '422':
+          description: "Get Bookings for Storage SpaceRequest is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '400':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+
+  /v1/storagespace/booking/accept:
+    put:
+      tags:
+        - booking controller v1
+      summary: Accept Bookings for Storage Space
+      description: Accept Bookings for Storage Space
+      operationId: acceptStorageSpaceBookings
+      parameters:
+        - in: header
+          name: "Authorization"
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: "bookingId"
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '201':
+          description: "Accept Bookings for Storage Space Success"
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '422':
+          description: "Accept Bookings for Storage SpaceRequest is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '400':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+
+  /v1/storagespace/booking/reject:
+    put:
+      tags:
+        - booking controller v1
+      summary: Reject Bookings for Storage Space
+      description: Reject Bookings for Storage Space
+      operationId: rejectStorageSpaceBookings
+      parameters:
+        - in: header
+          name: "Authorization"
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: "bookingId"
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '201':
+          description: "Reject Bookings for Storage Space Success"
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '422':
+          description: "Reject Bookings for Storage SpaceRequest is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '400':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+  

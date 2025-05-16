@@ -66,7 +66,7 @@ public class UserController implements UserControllerV1Api {
     FreeShelfApiBaseApiResponse response = mapper.toUserMgmtBaseApiResponse(
         apiResponseBuilder.buildSuccessApiResponse(Constants.EDIT_ADDRESS_SUCCESS_MESSAGE));
     User user = userService.handleGetUserProfile(authorization);
-    userService.handleEditAddress(editAddressRequest,user);
+    userService.handleEditAddress(editAddressRequest, user);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 

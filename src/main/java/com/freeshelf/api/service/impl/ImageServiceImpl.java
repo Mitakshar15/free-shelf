@@ -40,7 +40,7 @@ public class ImageServiceImpl implements ImageService {
   @Override
   public List<SpaceImage> uploadImages(User user, Long spaceId, List<MultipartFile> files,
       List<String> captions) throws BadRequestException {
-    // Get a fresh instance of the storage space for each upload to avoid optimistic locking issues
+
     StorageSpace space = storageSpaceRepository.findById(spaceId)
         .orElseThrow(() -> new RuntimeException("Storage space not found with id: " + spaceId));
 
@@ -52,7 +52,6 @@ public class ImageServiceImpl implements ImageService {
       throw new BadRequestException("Cannot upload more than 5 images at once");
     }
 
-    // Check if there's already a primary image
     boolean hasPrimaryImage = spaceImageRepository.existsBySpaceIdAndPrimaryTrue(spaceId);
 
     List<SpaceImage> savedImages = new ArrayList<>();
@@ -61,7 +60,6 @@ public class ImageServiceImpl implements ImageService {
       MultipartFile file = files.get(i);
       String caption = (captions != null && i < captions.size()) ? captions.get(i) : null;
 
-      // Validate file
       if (file.isEmpty()) {
         continue;
       }
@@ -70,17 +68,12 @@ public class ImageServiceImpl implements ImageService {
         throw new BadRequestException(
             "Invalid file type. Only JPG, JPEG, and PNG files are allowed.");
       }
-
-      // Save file to server
       String imageUrl = saveFile(file, spaceId);
-
-      // Create SpaceImage entity
       SpaceImage spaceImage = new SpaceImage();
       spaceImage.setSpace(space);
       spaceImage.setImageUrl(imageUrl);
       spaceImage.setCaption(caption);
 
-      // Set as primary if it's the first image and no primary exists
       if (!hasPrimaryImage && i == 0) {
         spaceImage.setPrimary(true);
         hasPrimaryImage = true;
@@ -88,18 +81,12 @@ public class ImageServiceImpl implements ImageService {
         spaceImage.setPrimary(false);
       }
 
-      // Save the image directly to ensure it's persisted properly
       spaceImageRepository.save(spaceImage);
       savedImages.add(spaceImage);
-
-      // Update space entity
       space.getImages().add(spaceImage);
     }
-
-    // Save the updated space entity
     storageSpaceRepository.saveAndFlush(space);
 
-    // Clear the persistence context to ensure fresh entities on subsequent calls
     storageSpaceRepository.flush();
 
     return savedImages;

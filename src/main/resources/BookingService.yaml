@@ -129,4 +129,82 @@ paths:
             application/json:
               schema:
                 $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+
+  /v1/storagespace/booking/accept:
+    put:
+      tags:
+        - booking controller v1
+      summary: Accept Bookings for Storage Space
+      description: Accept Bookings for Storage Space
+      operationId: acceptStorageSpaceBookings
+      parameters:
+        - in: header
+          name: "Authorization"
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: "bookingId"
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '201':
+          description: "Accept Bookings for Storage Space Success"
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '422':
+          description: "Accept Bookings for Storage SpaceRequest is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '400':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+
+  /v1/storagespace/booking/reject:
+    put:
+      tags:
+        - booking controller v1
+      summary: Reject Bookings for Storage Space
+      description: Reject Bookings for Storage Space
+      operationId: rejectStorageSpaceBookings
+      parameters:
+        - in: header
+          name: "Authorization"
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: "bookingId"
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '201':
+          description: "Reject Bookings for Storage Space Success"
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '422':
+          description: "Reject Bookings for Storage SpaceRequest is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '400':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
   

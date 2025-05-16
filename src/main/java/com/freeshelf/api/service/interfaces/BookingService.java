@@ -11,4 +11,10 @@ public interface BookingService {
   void handleBookStorageSpace(User renter, BookingRequest bookingRequest);
 
   Set<Booking> handleGetStorageSpaceBookings(Long spaceId, User host);
+
+  void handleCancelBooking(Long bookingId);
+
+  void handleAcceptBooking(Long bookingId);
+
+  void handleRejectBooking(Long bookingId);
 }

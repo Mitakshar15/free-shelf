@@ -8,10 +8,13 @@ import com.freeshelf.api.data.repository.StorageSpaceRepository;
 import com.freeshelf.api.service.interfaces.BookingService;
 import com.freeshelf.api.utils.BookingUtils;
 import com.freeshelf.api.utils.enums.BookingStatus;
+import com.freeshelf.api.utils.enums.SpaceStatus;
 import lombok.RequiredArgsConstructor;
 import org.producr.api.dtos.BookingRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Service
@@ -37,7 +40,8 @@ public class BookingServiceImpl implements BookingService {
     booking.setTotalPrice(bookingUtils.calculateTotalPriceForBooking(bookingRequest.getStartDate(),
         bookingRequest.getEndDate(), space.getPricePerMonth()));
     booking.setStatus(BookingStatus.PENDING);
-    if (bookingUtils.checkAvailability(bookingRequest, space)) {
+    if (bookingUtils.checkAvailability(bookingRequest.getStartDate(), bookingRequest.getEndDate(),
+        space)) {
       bookingRepository.save(booking);
     } else
       throw new RuntimeException("Space is not available for booking");
@@ -50,5 +54,40 @@ public class BookingServiceImpl implements BookingService {
         .orElseThrow(() -> new RuntimeException("Space not found"));
     return bookingRepository.findAllBySpace(space, host).orElse(Set.of());
   }
+
+  @PreAuthorize("hasRole('ROLE_HOST')")
+  public void handleRejectBooking(Long bookingId) {
+    Booking booking = bookingRepository.findById(bookingId)
+        .orElseThrow(() -> new RuntimeException("Booking not found"));
+    booking.setStatus(BookingStatus.REJECTED);
+    booking.setStatusUpdatedAt(LocalDateTime.now());
+    booking.getSpace().setStatus(SpaceStatus.ACTIVE);
+    bookingRepository.save(booking);
+  }
+
+  @Override
+  @PreAuthorize("hasRole('ROLE_HOST')")
+  public void handleAcceptBooking(Long bookingId) {
+    Booking booking = bookingRepository.findById(bookingId)
+        .orElseThrow(() -> new RuntimeException("Booking not found"));
+    StorageSpace space = booking.getSpace();
+    space.setStatus(SpaceStatus.BOOKED);
+    booking.setStatus(BookingStatus.APPROVED);
+    booking.setStatusUpdatedAt(LocalDateTime.now());
+    bookingRepository.save(booking);
+  }
+
+
+  @Override
+  @PreAuthorize("hasRole('ROLE_RENTER')")
+  public void handleCancelBooking(Long bookingId) {
+    Booking booking = bookingRepository.findById(bookingId)
+        .orElseThrow(() -> new RuntimeException("Booking not found"));
+    booking.setStatus(BookingStatus.CANCELLED);
+    bookingRepository.save(booking);
+    booking.getSpace().setStatus(SpaceStatus.ACTIVE);
+  }
+
+
 
 }

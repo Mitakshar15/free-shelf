@@ -22,18 +22,16 @@ public class BookingUtils {
 
   private final BookingRepository bookingRepository;
 
-  public boolean checkAvailability(BookingRequest bookingRequest, StorageSpace space) {
+  public boolean checkAvailability(OffsetDateTime startDate, OffsetDateTime endDate,
+      StorageSpace space) {
     // Check if the space is in an available status
     if (space.getStatus() != SpaceStatus.ACTIVE) {
       throw new IllegalStateException("Storage space is not currently active for booking");
     }
 
     // Check if the requested dates are valid
-    OffsetDateTime requestStartDate = bookingRequest.getStartDate();
-    OffsetDateTime requestEndDate = bookingRequest.getEndDate();
 
-    if (requestStartDate == null || requestEndDate == null
-        || requestStartDate.isAfter(requestEndDate)) {
+    if (startDate == null || endDate == null || startDate.isAfter(endDate)) {
       throw new IllegalArgumentException(
           "Invalid booking dates: start date must be before end date");
     }
@@ -44,18 +42,18 @@ public class BookingUtils {
       OffsetDateTime spaceStartDate = availabilityPeriod.getStartDate();
       OffsetDateTime spaceEndDate = availabilityPeriod.getEndDate();
 
-      if (spaceStartDate != null && requestStartDate.isBefore(spaceStartDate)) {
+      if (spaceStartDate != null && startDate.isBefore(spaceStartDate)) {
         throw new IllegalArgumentException(
             "Requested start date is before space availability period");
       }
-      if (spaceEndDate != null && requestEndDate.isAfter(spaceEndDate)) {
+      if (spaceEndDate != null && endDate.isAfter(spaceEndDate)) {
         throw new IllegalArgumentException("Requested end date is after space availability period");
       }
     }
 
     // Find any bookings for this space that overlap with the requested period
     List<Booking> overlappingBookings = bookingRepository.findOverlappingBookings(space.getId(),
-        BookingStatus.CANCELLED, BookingStatus.REJECTED, requestStartDate, requestEndDate);
+        BookingStatus.CANCELLED, BookingStatus.REJECTED, startDate, endDate);
 
     // Space is available only if there are no overlapping bookings
     return overlappingBookings.isEmpty();

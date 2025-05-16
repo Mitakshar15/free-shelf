@@ -50,4 +50,19 @@ public class BookingController implements BookingControllerV1Api {
       BookingRequest bookingRequest) throws Exception {
     return BookingControllerV1Api.super.payForStorageSpace(authorization, bookingRequest);
   }
+
+
+  @Override
+  public ResponseEntity<FreeShelfApiBaseApiResponse> acceptStorageSpaceBookings(String authorization, Long bookingId) throws Exception {
+    bookingService.handleAcceptBooking(bookingId);
+    FreeShelfApiBaseApiResponse response = mapper.toBaseApiResponse(apiResponseBuilder.buildSuccessApiResponse(Constants.ACCEPT_STORAGE_SPACE_BOOKING_SUCCESS_MESSAGE));
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<FreeShelfApiBaseApiResponse> rejectStorageSpaceBookings(String authorization, Long bookingId) throws Exception {
+    bookingService.handleRejectBooking(bookingId);
+    FreeShelfApiBaseApiResponse response = mapper.toBaseApiResponse(apiResponseBuilder.buildSuccessApiResponse(Constants.ACCEPT_STORAGE_SPACE_BOOKING_SUCCESS_MESSAGE));
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
 }

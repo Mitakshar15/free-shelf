@@ -30,5 +30,6 @@ public class Constants {
       "book.storage.space.success.message";
   public static final String GET_STORAGE_SPACE_BOOKINGS_SUCCESS_MESSAGE =
       "get.storage.space.bookings.success.message";
-  public static final String ACCEPT_STORAGE_SPACE_BOOKING_SUCCESS_MESSAGE ="accept.storage.space.booking.success.message";
+  public static final String ACCEPT_STORAGE_SPACE_BOOKING_SUCCESS_MESSAGE =
+      "accept.storage.space.booking.success.message";
 }

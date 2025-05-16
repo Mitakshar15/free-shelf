@@ -28,4 +28,6 @@ public class Constants {
       "storage.space.published.success.message";;
   public static final String BOOK_STORAGE_SPACE_SUCCESS_MESSAGE =
       "book.storage.space.success.message";;
+  public static final String GET_STORAGE_SPACE_BOOKINGS_SUCCESS_MESSAGE =
+      "get.storage.space.bookings.success.message";;
 }

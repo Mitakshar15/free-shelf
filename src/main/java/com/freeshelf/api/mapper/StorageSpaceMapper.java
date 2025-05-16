@@ -1,5 +1,6 @@
 package com.freeshelf.api.mapper;
 
+import com.freeshelf.api.data.domain.booking.Booking;
 import com.freeshelf.api.data.domain.space.AvailabilityPeriod;
 import com.freeshelf.api.data.domain.space.SpaceImage;
 import com.freeshelf.api.data.domain.space.StorageSpace;
@@ -38,5 +39,8 @@ public interface StorageSpaceMapper {
       @Valid CreateStorageSpaceRequestAvailabilityPeriod availabilityPeriod);
 
 
+  BookingResponse toBookingResponse(BaseApiResponse baseApiResponse);
+
+  Set<@Valid BookingDto> toBookingSet(Set<Booking> bookings);
 }
 

@@ -6,16 +6,13 @@ import com.freeshelf.api.data.domain.user.User;
 import com.freeshelf.api.data.repository.BookingRepository;
 import com.freeshelf.api.data.repository.StorageSpaceRepository;
 import com.freeshelf.api.service.interfaces.BookingService;
+import com.freeshelf.api.utils.BookingUtils;
 import com.freeshelf.api.utils.enums.BookingStatus;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.producr.api.dtos.BookingRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +20,7 @@ public class BookingServiceImpl implements BookingService {
 
   private final StorageSpaceRepository storageSpaceRepository;
   private final BookingRepository bookingRepository;
+  private final BookingUtils bookingUtils;
 
   @Override
   @PreAuthorize("hasRole('ROLE_RENTER')")
@@ -36,23 +34,21 @@ public class BookingServiceImpl implements BookingService {
     booking.setRenter(renter);
     booking.setStartDate(bookingRequest.getStartDate());
     booking.setEndDate(bookingRequest.getEndDate());
-    booking.setTotalPrice(calculateTotalPriceForBooking(bookingRequest.getStartDate(),
+    booking.setTotalPrice(bookingUtils.calculateTotalPriceForBooking(bookingRequest.getStartDate(),
         bookingRequest.getEndDate(), space.getPricePerMonth()));
     booking.setStatus(BookingStatus.PENDING);
-    if(checkAvailability(bookingRequest, space)) {
+    if (bookingUtils.checkAvailability(bookingRequest, space)) {
       bookingRepository.save(booking);
-    }
-    else throw new RuntimeException("Space is not available for booking");
+    } else
+      throw new RuntimeException("Space is not available for booking");
   }
 
-  private boolean checkAvailability(BookingRequest bookingRequest, StorageSpace space) {
-    //TODO: check if space is available for booking in the given period;
-    return true;
+  @Override
+  @PreAuthorize("hasRole('ROLE_HOST')")
+  public Set<Booking> handleGetStorageSpaceBookings(Long spaceId, User host) {
+    StorageSpace space = storageSpaceRepository.findById(spaceId)
+        .orElseThrow(() -> new RuntimeException("Space not found"));
+    return bookingRepository.findAllBySpace(space, host).orElse(Set.of());
   }
 
-  private @NotNull Long calculateTotalPriceForBooking(@Valid OffsetDateTime startDate,
-      @Valid OffsetDateTime endDate, Double pricePerMonth) {
-   //TODO: calculate total price for booking by analysing the priceper month of space, and start date and end date of the booking
-    return 0L;
-  }
 }

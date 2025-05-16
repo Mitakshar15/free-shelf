@@ -672,6 +672,22 @@ components:
           format: date-time
           description: End date and time of availability
 
+    BookingRequest:
+      type: object
+      properties:
+        spaceId:
+          type: integer
+          format: int64
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+
+
+
+
 
 
 

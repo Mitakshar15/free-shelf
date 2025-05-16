@@ -98,8 +98,10 @@ public class StorageSpaceController implements StorageSpaceControllerV1Api {
   }
 
   @Override
-  public ResponseEntity<FreeShelfApiBaseApiResponse> publishStorageSpace(String authorization, Long spaceId) throws Exception {
-    FreeShelfApiBaseApiResponse response = mapper.toBaseApiResponse(apiResponseBuilder.buildSuccessApiResponse(Constants.STORAGE_SPACE_PUBLISHED_SUCCESS_MESSAGE));
+  public ResponseEntity<FreeShelfApiBaseApiResponse> publishStorageSpace(String authorization,
+      Long spaceId) throws Exception {
+    FreeShelfApiBaseApiResponse response = mapper.toBaseApiResponse(apiResponseBuilder
+        .buildSuccessApiResponse(Constants.STORAGE_SPACE_PUBLISHED_SUCCESS_MESSAGE));
     storageSpaceService.handlePublishStorageSpace(spaceId);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }

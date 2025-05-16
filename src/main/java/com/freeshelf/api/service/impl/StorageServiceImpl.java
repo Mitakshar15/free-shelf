@@ -73,9 +73,9 @@ public class StorageServiceImpl implements StorageSpaceService {
   @Override
   @PreAuthorize("hasRole('ROLE_HOST')")
   public void handlePublishStorageSpace(Long spaceId) {
-   StorageSpace space = storageSpaceRepository.findById(spaceId)
-       .orElseThrow(() -> new RuntimeException("Storage space not found with id: " + spaceId));
-   space.setStatus(SpaceStatus.ACTIVE);
-   storageSpaceRepository.save(space);
+    StorageSpace space = storageSpaceRepository.findById(spaceId)
+        .orElseThrow(() -> new RuntimeException("Storage space not found with id: " + spaceId));
+    space.setStatus(SpaceStatus.ACTIVE);
+    storageSpaceRepository.save(space);
   }
 }

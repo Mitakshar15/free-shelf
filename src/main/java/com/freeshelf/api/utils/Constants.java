@@ -24,5 +24,8 @@ public class Constants {
       "find.nearest.storage.space.success.message";;
   public static final String UPDATE_AVAILABILITY_PERIOD_SUCCESS_MESSAGE =
       "update.availability.period.success.message";;
-  public static final String STORAGE_SPACE_PUBLISHED_SUCCESS_MESSAGE ="storage.space.published.success.message"; ;
+  public static final String STORAGE_SPACE_PUBLISHED_SUCCESS_MESSAGE =
+      "storage.space.published.success.message";;
+  public static final String BOOK_STORAGE_SPACE_SUCCESS_MESSAGE =
+      "book.storage.space.success.message";;
 }

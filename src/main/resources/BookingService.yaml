@@ -1,0 +1,55 @@
+openapi: 3.0.3
+info:
+  title: Free Shelf Booking Services - OpenAPI 3.0
+  description: |-
+    Free Shelf API Spec
+  version: 0.0.1
+  contact:
+    name: API Support
+    email: work.mitakshar@gmail.com
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Free Shelf api  v1
+    description: Free Shelf - Online Free Storage Rental Service
+paths:
+  /v1/storagespace/booking:
+    post:
+      tags:
+        - booking controller v1
+      summary: Book Storage Space
+      description: Book a Storage Space
+      operationId: bookStorageSpace
+      parameters:
+        - in: header
+          name: "Authorization"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Book a Storage Space
+        content:
+          application/json:
+            schema:
+              $ref: './FreeShelfApiComponents.yaml#/components/schemas/BookingRequest'
+        required: true
+      responses:
+        '201':
+          description: "Book  Storage Space Success"
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '422':
+          description: "Book  Storage Space Request is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '400':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+  

@@ -521,10 +521,6 @@ components:
           type: string
           format: date-time
           description: End date and time of availability
-        version:
-          type: integer
-          format: int32
-          description: Version number for optimistic locking
 
     RatingDto:
       type: object
@@ -585,10 +581,7 @@ components:
           type: string
           format: local-date-time
           description: Timestamp when the rating was last updated
-        version:
-          type: integer
-          format: int32
-          description: Version number for optimistic locking
+
 
     ReviewDto:
       type: object
@@ -666,6 +659,19 @@ components:
           type: number
         radius:
           type: number
+
+    UpdateAvailabilityPeriodRequest:
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date-time
+          description: Start date and time of availability
+        endDate:
+          type: string
+          format: date-time
+          description: End date and time of availability
+
 
 
 

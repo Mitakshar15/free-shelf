@@ -83,6 +83,43 @@ paths:
             application/json:
               schema:
                 $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+    put:
+      tags:
+        - storage space controller v1
+      summary: Publish Storage Space
+      description: Publish Storage Space
+      operationId: publishStorageSpace
+      parameters:
+        - in: header
+          name: "Authorization"
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: "spaceId"
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '201':
+          description: "Publish Storage Space Success"
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '422':
+          description: "Publish Storage Space Request is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '400':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
 
   /v1/storagespace/addImages/{storageSpaceId}:
     post:
@@ -195,6 +232,39 @@ paths:
             application/json:
               schema:
                 $ref: './FreeShelfApiComponents.yaml#/components/schemas/StorageSpaceResponse'
+        '404':
+          description: Space  not found
+
+  /v1/storagespace/updateAvailability:
+    post:
+      operationId: updateAvailabilityPeriod
+      summary: Update The Availability Period for the Storage Space
+      tags:
+        - storage space controller v1
+      parameters:
+        - in: header
+          name: "Authorization"
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: "spaceId"
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './FreeShelfApiComponents.yaml#/components/schemas/UpdateAvailabilityPeriodRequest'
+      responses:
+        '200':
+          description: Storage Space Availability successfully Updated
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
         '404':
           description: Space  not found
 

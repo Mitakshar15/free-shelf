@@ -20,7 +20,7 @@ public interface StorageSpaceRepository extends JpaRepository<StorageSpace, Long
       + "WHERE a.latitude IS NOT NULL AND a.longitude IS NOT NULL  and s.host!=:user "
       + "AND (6371 * acos(cos(radians(:latitude)) * cos(radians(a.latitude)) * "
       + "cos(radians(a.longitude) - radians(:longitude)) + "
-      + "sin(radians(:latitude)) * sin(radians(a.latitude)))) <= :radius ")
+      + "sin(radians(:latitude)) * sin(radians(a.latitude)))) <= :radius AND s.status = 'ACTIVE'")
   Optional<Set<StorageSpace>> findNearbyStorageSpaces(BigDecimal latitude, BigDecimal longitude,
       BigDecimal radius, @Param("user") User user);
 

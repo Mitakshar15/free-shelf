@@ -84,4 +84,23 @@ public class StorageSpaceController implements StorageSpaceControllerV1Api {
         storageSpaceService.handleFindNearestStorageSpace(user, findNearestStorageSpaceRequest)));
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
+
+  @Override
+  public ResponseEntity<FreeShelfApiBaseApiResponse> updateAvailabilityPeriod(String authorization,
+      UpdateAvailabilityPeriodRequest updateAvailabilityPeriodRequest, Long spaceId)
+      throws Exception {
+    FreeShelfApiBaseApiResponse response = mapper.toBaseApiResponse(apiResponseBuilder
+        .buildSuccessApiResponse(Constants.UPDATE_AVAILABILITY_PERIOD_SUCCESS_MESSAGE));
+    User user = userService.handleGetUserProfile(authorization);
+    storageSpaceService.handleUpdateAvailabilityPeriod(user, updateAvailabilityPeriodRequest,
+        spaceId);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<FreeShelfApiBaseApiResponse> publishStorageSpace(String authorization, Long spaceId) throws Exception {
+    FreeShelfApiBaseApiResponse response = mapper.toBaseApiResponse(apiResponseBuilder.buildSuccessApiResponse(Constants.STORAGE_SPACE_PUBLISHED_SUCCESS_MESSAGE));
+    storageSpaceService.handlePublishStorageSpace(spaceId);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
 }

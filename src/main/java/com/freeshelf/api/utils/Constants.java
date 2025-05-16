@@ -22,4 +22,7 @@ public class Constants {
       "set.image.as.primary.success.message";;;
   public static final String FIND_NEAREST_STORAGE_SPACE_SUCCESS_MESSAGE =
       "find.nearest.storage.space.success.message";;
+  public static final String UPDATE_AVAILABILITY_PERIOD_SUCCESS_MESSAGE =
+      "update.availability.period.success.message";;
+  public static final String STORAGE_SPACE_PUBLISHED_SUCCESS_MESSAGE ="storage.space.published.success.message"; ;
 }

@@ -51,7 +51,8 @@ public class UserServiceImpl implements UserService {
     SecurityContextHolder.getContext().setAuthentication(authentication);
     UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
     String jwt = jwtTokenUtil.generateToken(userPrincipal);
-    User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+    User user = userRepository.findById(userPrincipal.getId())
+        .orElseThrow(() -> new RuntimeException("User not found"));
     user.setLastLoginAt(LocalDateTime.now());
     userRepository.save(user);
     AuthResponseDto authResponseDto = new AuthResponseDto();
@@ -119,7 +120,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void handleUpdateUserProfile(String authorization, UpdateProfileRequest updateProfileRequest) {
+  public void handleUpdateUserProfile(String authorization,
+      UpdateProfileRequest updateProfileRequest) {
     User user = handleGetUserProfile(authorization);
     user.setFirstName(updateProfileRequest.getFirstName());
     user.setLastName(updateProfileRequest.getLastName());
@@ -167,8 +169,8 @@ public class UserServiceImpl implements UserService {
       Long addressId = editAddressRequest.getId().longValue();
       Address existingAddress = addressRepository.findById(addressId)
           .orElseThrow(() -> new RuntimeException("Address not found with ID: " + addressId));
-      if (existingAddress.getUserProfile() == null ||
-          !existingAddress.getUserProfile().getId().equals(user.getProfile().getId())) {
+      if (existingAddress.getUserProfile() == null
+          || !existingAddress.getUserProfile().getId().equals(user.getProfile().getId())) {
         throw new RuntimeException("Address does not belong to the current user");
       }
       existingAddress.setStreet(editAddressRequest.getStreet());
@@ -186,7 +188,8 @@ public class UserServiceImpl implements UserService {
       userRepository.save(user);
 
     } catch (org.springframework.orm.ObjectOptimisticLockingFailureException e) {
-      throw new RuntimeException("Could not update address due to concurrent modification. Please try again.", e);
+      throw new RuntimeException(
+          "Could not update address due to concurrent modification. Please try again.", e);
     } catch (Exception e) {
       throw new RuntimeException("Failed to update address: " + e.getMessage(), e);
     }
@@ -194,6 +197,6 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public Set<@Valid Address> handleGetAddresses(User user) {
-      return addressRepository.findAllByUserProfile(user.getProfile());
+    return addressRepository.findAllByUserProfile(user.getProfile());
   }
 }

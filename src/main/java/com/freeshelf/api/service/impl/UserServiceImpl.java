@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -79,18 +80,21 @@ public class UserServiceImpl implements UserService {
 
     user.setFirstName(signUpRequest.getFirstName());
     user.setLastName(signUpRequest.getLastName());
-    switch (signUpRequest.getRole()) {
-      case RENTER:
-        user.setRole(UserRole.RENTER);
-        break;
-      case HOST:
-        user.setRole(UserRole.HOST);
-        break;
-      default:
-        user.setRole(UserRole.ADMIN);
-        break;
-    }
-
+    Set<UserRole> roles = new HashSet<>();
+    signUpRequest.getRole().stream().forEach(role -> {
+      switch (role) {
+        case RENTER:
+          roles.add(UserRole.RENTER);
+          break;
+        case HOST:
+          roles.add(UserRole.HOST);
+          break;
+        default:
+          roles.add(UserRole.HOST);
+          break;
+      }
+    });
+    user.setRoles(roles);
     user.setUserName(signUpRequest.getUsername());
     user.setEmail(signUpRequest.getEmail());
     // For demo purposes, set account as verified In production, you would implement email

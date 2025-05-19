@@ -57,9 +57,11 @@ public class User extends BaseEntity {
   @Column(nullable = false, length = 20, name = "user_status")
   private UserStatus status = UserStatus.PENDING;
 
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+  @Column(name = "role", nullable = false)
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false, length = 20, name = "user_role")
-  private UserRole role;
+  private Set<UserRole> roles = new HashSet<>();
 
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
   @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")

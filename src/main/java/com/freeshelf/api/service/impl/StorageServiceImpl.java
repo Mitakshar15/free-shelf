@@ -30,7 +30,7 @@ public class StorageServiceImpl implements StorageSpaceService {
 
 
   @Override
-  @PreAuthorize("hasRole('ROLE_HOST')")
+  @PreAuthorize("hasRole('HOST')")
   public StorageSpace handleCreateStorageSpace(User user,
       CreateStorageSpaceRequest createStorageSpaceRequest) {
     // TODO: Handle The Storage Space Image Upload Functionality to actually Upload Images To Server

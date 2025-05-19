@@ -54,8 +54,11 @@ components:
         lastName:
           type: string
         role:
-          type: string
-          enum: [HOST, RENTER, ADMIN]
+          type: array
+          items:
+            type: string
+            enum: [HOST, RENTER, ADMIN]
+            uniqueItems: true;
         password:
           type: string
           description: User's password.

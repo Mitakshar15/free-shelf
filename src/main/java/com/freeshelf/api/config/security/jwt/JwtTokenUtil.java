@@ -27,7 +27,6 @@ public class JwtTokenUtil {
   public String generateToken(UserDetails userDetails) {
     Map<String, Object> claims = new HashMap<>();
 
-    // Add roles to claims
     Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
     if (!authorities.isEmpty()) {
       claims.put("roles",
@@ -44,7 +43,7 @@ public class JwtTokenUtil {
 
   public String generateTokenFromUser(User user) {
     Map<String, Object> claims = new HashMap<>();
-    claims.put("roles", Collections.singletonList("ROLE_" + user.getRole().name()));
+    claims.put("roles", user.getRoles());
     claims.put("userId", user.getId());
     claims.put("email", user.getEmail());
 
@@ -64,8 +63,7 @@ public class JwtTokenUtil {
 
   public String getUsernameFromToken(String token) {
     try {
-      String claim = getClaimFromToken(token, Claims::getSubject);
-      return claim;
+      return getClaimFromToken(token, Claims::getSubject);
     } catch (Exception e) {
       throw new RuntimeException("INVALID TOKEN ::" + token + ":: ERROR" + e.getMessage());
     }
@@ -73,9 +71,7 @@ public class JwtTokenUtil {
 
   public Long getUserIdFromToken(String token) {
     try {
-      Long claim =
-          Long.valueOf(getClaimFromToken(token, claims -> String.valueOf(claims.get("userId"))));
-      return claim;
+      return Long.valueOf(getClaimFromToken(token, claims -> String.valueOf(claims.get("userId"))));
     } catch (Exception e) {
       throw new RuntimeException("INVALID TOKEN ::" + token + ":: ERROR" + e.getMessage());
     }

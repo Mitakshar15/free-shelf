@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -77,7 +78,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     user.setAccountVerified(true);
     user.setFirstName(userInfo.getName());
     user.setStatus(UserStatus.ACTIVE);
-    user.setRole(UserRole.HOST);
+    //Initial Role is set as Host by Default, later implement a service to choose roles for the user
+    user.setRoles(Set.of(UserRole.HOST));
     UserProfile profile = new UserProfile();
     profile.setUser(user);
     profile.setProfileImageUrl(userInfo.getImageUrl());

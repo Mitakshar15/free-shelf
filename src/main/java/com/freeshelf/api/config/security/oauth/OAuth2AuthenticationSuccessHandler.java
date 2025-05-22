@@ -10,6 +10,7 @@ import com.freeshelf.api.mapper.UserMgmtMapper;
 import com.freeshelf.api.utils.Constants;
 import com.freeshelf.api.utils.enums.AuthProvider;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,26 +32,22 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-      Authentication authentication) throws IOException, ServletException {
+                                      Authentication authentication) throws IOException, ServletException {
     clearAuthenticationAttributes(request);
     UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
     String token = jwtTokenUtil.generateToken(userPrincipal);
-    AuthResponse authResponse =
-        mapper.toAuthResponse(builder.buildSuccessApiResponse(Constants.AUTH_SUCCESS_MESSAGE));
-    AuthResponseDto authResponseDto = new AuthResponseDto();
-    authResponseDto.setToken(token);
-    authResponseDto.setUserName(userPrincipal.getUsername());
-    authResponseDto.setProvider(AuthProvider.GOOGLE.toString());
-    authResponse.setData(authResponseDto);
-    ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper.registerModule(new JavaTimeModule());
-    objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // Op
-    String jsonResponse = objectMapper.writeValueAsString(authResponse);
-    // Set response headers and write response
-    response.setContentType("application/json");
-    response.setCharacterEncoding("UTF-8");
-    response.getWriter().write(jsonResponse);
-    response.getWriter().flush();
+
+    // Set token in HTTP-only cookie
+    Cookie tokenCookie = new Cookie("free-shelf-token", token);
+//    tokenCookie.setHttpOnly(true);
+    tokenCookie.setSecure(true); // for HTTPS
+    tokenCookie.setPath("/");
+    tokenCookie.setMaxAge(7*24 * 60 * 60 * 1000);
+    tokenCookie.setDomain("localhost");
+    response.addCookie(tokenCookie);
+
+    // Redirect to frontend application
+    response.sendRedirect("http://localhost:4200/");
   }
 }

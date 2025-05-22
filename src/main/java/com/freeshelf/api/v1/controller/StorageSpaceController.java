@@ -7,6 +7,8 @@ import com.freeshelf.api.service.interfaces.ImageService;
 import com.freeshelf.api.service.interfaces.StorageSpaceService;
 import com.freeshelf.api.service.interfaces.UserService;
 import com.freeshelf.api.utils.Constants;
+import com.ratelimit.annotation.RateLimit;
+import com.ratelimit.annotation.RateLimitScope;
 import lombok.RequiredArgsConstructor;
 import org.producr.api.StorageSpaceControllerV1Api;
 import org.producr.api.dtos.*;
@@ -63,6 +65,7 @@ public class StorageSpaceController implements StorageSpaceControllerV1Api {
   }
 
   @Override
+  @RateLimit(requests = 5, durationMinutes = 30, scope = RateLimitScope.USER)
   public ResponseEntity<SpaceImageResponse> addStorageSpaceImages(String authorization,
       Long storageSpaceId, @RequestParam("images") List<MultipartFile> images,
       @RequestParam(value = "captions", required = false) List<String> captions) throws Exception {

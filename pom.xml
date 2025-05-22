@@ -201,6 +201,13 @@
             <artifactId>firebase-admin</artifactId>
             <version>9.2.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.Mitakshar15</groupId>
+            <artifactId>smart-rate-limit</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+
     </dependencies>
 
     <build>

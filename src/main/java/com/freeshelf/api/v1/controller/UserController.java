@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -76,6 +78,16 @@ public class UserController implements UserControllerV1Api {
         apiResponseBuilder.buildSuccessApiResponse(Constants.GET_ADDRESS_SUCCUESS_MESSAGE));
     User user = userService.handleGetUserProfile(authorization);
     response.data(mapper.toAddressSet(userService.handleGetAddresses(user)));
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<FreeShelfApiBaseApiResponse> assignUserRole(String authorization,
+      List<String> roles) throws Exception {
+    FreeShelfApiBaseApiResponse response = mapper.toUserMgmtBaseApiResponse(
+        apiResponseBuilder.buildSuccessApiResponse(Constants.ASSIGN_ROLE_SUCCESS_MESSAGE));
+    User user = userService.handleGetUserProfile(authorization);
+    userService.assignUserRole(user, roles);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 }

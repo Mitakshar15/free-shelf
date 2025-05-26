@@ -151,6 +151,45 @@ paths:
             application/json:
               schema:
                 $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+  /v1/user/role:
+    put:
+      tags:
+        - user controller v1
+      summary: Update User Role
+      description: Update User Role
+      operationId: assignUserRole
+      parameters:
+        - in: header
+          name: "Authorization"
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: "Roles"
+          schema:
+            type: array
+            items:
+              type: string
+          required: true
+      responses:
+        '200':
+          description: "Update User Role  Success"
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '422':
+          description: "Update User Role is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '401':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
 
   /v1/user/address:
     post:

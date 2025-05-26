@@ -80,7 +80,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     user.setStatus(UserStatus.ACTIVE);
     // Initial Role is set as Host by Default, later implement a service to choose roles for the
     // user
-    user.setRoles(Set.of(UserRole.HOST));
+    user.setRoles(Set.of(UserRole.UNASSIGNED));
     UserProfile profile = new UserProfile();
     profile.setUser(user);
     profile.setProfileImageUrl(userInfo.getImageUrl());

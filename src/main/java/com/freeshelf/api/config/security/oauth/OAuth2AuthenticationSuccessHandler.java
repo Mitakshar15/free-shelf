@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.producr.api.dtos.AuthResponse;
 import org.producr.api.dtos.AuthResponseDto;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -30,9 +31,13 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
   private final UserMgmtMapper mapper;
   private final ApiResponseBuilder builder;
 
+
+  @Value("${oauth.cookie.redirect.url}")
+  private String redirectUrl;
+
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                      Authentication authentication) throws IOException, ServletException {
+      Authentication authentication) throws IOException, ServletException {
     clearAuthenticationAttributes(request);
     UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
@@ -40,14 +45,14 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     // Set token in HTTP-only cookie
     Cookie tokenCookie = new Cookie("free-shelf-token", token);
-//    tokenCookie.setHttpOnly(true);
+    // tokenCookie.setHttpOnly(true);
     tokenCookie.setSecure(true); // for HTTPS
     tokenCookie.setPath("/");
-    tokenCookie.setMaxAge(7*24 * 60 * 60 * 1000);
+    tokenCookie.setMaxAge(7 * 24 * 60 * 60 * 1000);
     tokenCookie.setDomain("localhost");
     response.addCookie(tokenCookie);
 
     // Redirect to frontend application
-    response.sendRedirect("http://localhost:4200/");
+    response.sendRedirect(redirectUrl);
   }
 }

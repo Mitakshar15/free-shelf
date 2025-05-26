@@ -24,4 +24,6 @@ public interface UserService {
   void handleEditAddress(EditAddressRequest editAddressRequest, User user);
 
   Set<@Valid Address> handleGetAddresses(User user);
+
+  void assignUserRole(User user, List<String> roles);
 }

@@ -35,6 +35,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
   @Value("${oauth.cookie.redirect.url}")
   private String redirectUrl;
 
+  @Value("${oauth.cookie.domain}")
+  private String cookieDomain;
+
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
       Authentication authentication) throws IOException, ServletException {
@@ -45,11 +48,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     // Set token in HTTP-only cookie
     Cookie tokenCookie = new Cookie("free-shelf-token", token);
-    // tokenCookie.setHttpOnly(true);
+    //tokenCookie.setHttpOnly(true);
     tokenCookie.setSecure(true); // for HTTPS
     tokenCookie.setPath("/");
     tokenCookie.setMaxAge(7 * 24 * 60 * 60 * 1000);
-    tokenCookie.setDomain("localhost");
+    tokenCookie.setDomain(cookieDomain);
     response.addCookie(tokenCookie);
 
     // Redirect to frontend application

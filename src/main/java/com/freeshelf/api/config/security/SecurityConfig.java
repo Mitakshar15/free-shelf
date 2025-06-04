@@ -49,10 +49,7 @@ public class SecurityConfig {
             CorsConfiguration cfg = new CorsConfiguration();
             cfg.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:4000",
                 "http://localhost:4202", "https://mitakshar-ecom.vercel.app/",
-                "https://angular-frontend-js4romm8g-mitakshar15s-projects.vercel.app/",
-                "http://localhost:5454/swagger-ui/index.html#/", "http://localhost:63343",
-                "https://fashionhubmitakshar.vercel.app"));
-            // cfg.setAllowedMethods(Collections.singletonList("*"));
+                "https://free-shelf-app.vercel.app"));
             cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
             cfg.setAllowCredentials(true);
             cfg.setAllowedHeaders(Collections.singletonList("*"));

@@ -24,4 +24,6 @@ public interface StorageSpaceService {
       UpdateAvailabilityPeriodRequest updateAvailabilityPeriodRequest, Long spaceId);
 
   void handlePublishStorageSpace(Long spaceId);
+
+  Set<StorageSpace> handleGetFeaturedSpaces();
 }

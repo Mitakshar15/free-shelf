@@ -48,7 +48,7 @@ public class SecurityConfig {
           public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
             CorsConfiguration cfg = new CorsConfiguration();
             cfg.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:4000",
-                "http://localhost:4200", "https://mitakshar-ecom.vercel.app/",
+                "http://localhost:4202", "https://mitakshar-ecom.vercel.app/",
                 "https://angular-frontend-js4romm8g-mitakshar15s-projects.vercel.app/",
                 "http://localhost:5454/swagger-ui/index.html#/", "http://localhost:63343",
                 "https://fashionhubmitakshar.vercel.app"));

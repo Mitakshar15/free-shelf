@@ -32,4 +32,6 @@ public interface StorageSpaceRepository extends JpaRepository<StorageSpace, Long
   @CachePut(value = "space", key = "#space.id")
   <S extends StorageSpace> S save(S space);
 
+  @Query("select s from  StorageSpace s order by s.createdAt desc limit 4")
+  Set<StorageSpace> getFeaturedSpaces();
 }

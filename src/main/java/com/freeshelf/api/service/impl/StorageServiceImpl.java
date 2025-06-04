@@ -78,4 +78,9 @@ public class StorageServiceImpl implements StorageSpaceService {
     space.setStatus(SpaceStatus.ACTIVE);
     storageSpaceRepository.save(space);
   }
+
+  @Override
+  public Set<StorageSpace> handleGetFeaturedSpaces() {
+    return  storageSpaceRepository.getFeaturedSpaces();
+  }
 }

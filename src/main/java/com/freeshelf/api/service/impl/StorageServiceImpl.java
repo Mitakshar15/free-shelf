@@ -81,6 +81,6 @@ public class StorageServiceImpl implements StorageSpaceService {
 
   @Override
   public Set<StorageSpace> handleGetFeaturedSpaces() {
-    return  storageSpaceRepository.getFeaturedSpaces();
+    return storageSpaceRepository.getFeaturedSpaces();
   }
 }

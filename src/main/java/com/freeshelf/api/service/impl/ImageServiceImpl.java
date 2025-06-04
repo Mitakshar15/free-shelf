@@ -1,5 +1,7 @@
 package com.freeshelf.api.service.impl;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.freeshelf.api.data.domain.space.SpaceImage;
 import com.freeshelf.api.data.domain.space.StorageSpace;
 import com.freeshelf.api.data.domain.user.User;
@@ -14,33 +16,26 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
 
-
-  @Value("${app.file.upload.dir}")
-  private String uploadDir;
-
-  @Value("${app.file.base-url}")
-  private String baseUrl;
+  @Value("${cloudinary.api.url}")
+  private String cloudinaryUrl;
 
   private final StorageSpaceRepository storageSpaceRepository;
   private final SpaceImageRepository spaceImageRepository;
+
+
 
   @Transactional
   @Override
   public List<SpaceImage> uploadImages(User user, Long spaceId, List<MultipartFile> files,
       List<String> captions) throws BadRequestException {
-
     StorageSpace space = storageSpaceRepository.findById(spaceId)
         .orElseThrow(() -> new RuntimeException("Storage space not found with id: " + spaceId));
 
@@ -53,7 +48,6 @@ public class ImageServiceImpl implements ImageService {
     }
 
     boolean hasPrimaryImage = spaceImageRepository.existsBySpaceIdAndPrimaryTrue(spaceId);
-
     List<SpaceImage> savedImages = new ArrayList<>();
 
     for (int i = 0; i < files.size(); i++) {
@@ -68,6 +62,7 @@ public class ImageServiceImpl implements ImageService {
         throw new BadRequestException(
             "Invalid file type. Only JPG, JPEG, and PNG files are allowed.");
       }
+
       String imageUrl = saveFile(file, spaceId);
       SpaceImage spaceImage = new SpaceImage();
       spaceImage.setSpace(space);
@@ -85,20 +80,12 @@ public class ImageServiceImpl implements ImageService {
       savedImages.add(spaceImage);
       space.getImages().add(spaceImage);
     }
+
     storageSpaceRepository.saveAndFlush(space);
-
-    storageSpaceRepository.flush();
-
     return savedImages;
   }
 
-  /**
-   * Set an image as the primary image for a storage space
-   *
-   * @param spaceId The ID of the storage space
-   * @param imageId The ID of the image to set as primary
-   * @return The updated primary image
-   */
+
   @Transactional
   @Override
   public SpaceImage setImageAsPrimary(Long spaceId, Long imageId) {
@@ -108,7 +95,7 @@ public class ImageServiceImpl implements ImageService {
     SpaceImage newPrimaryImage = spaceImageRepository.findByIdAndSpaceId(imageId, spaceId)
         .orElseThrow(() -> new RuntimeException("Image not found with id: " + imageId));
 
-    // Reset all images' primary flag to false
+
     spaceImageRepository.resetPrimaryFlagForSpace(spaceId);
 
     // Set the selected image as primary
@@ -116,30 +103,14 @@ public class ImageServiceImpl implements ImageService {
     return spaceImageRepository.save(newPrimaryImage);
   }
 
-  /**
-   * Save file to server and return its URL
-   */
   private String saveFile(MultipartFile file, Long spaceId) {
     try {
-      // Create directory structure for organized storage
-      String directoryPath = String.format("%s/spaces/%d/images", uploadDir, spaceId);
-      Path directory = Paths.get(directoryPath);
-      Files.createDirectories(directory);
-
-      // Generate unique filename to prevent collisions
-      String originalFilename = file.getOriginalFilename();
-      String fileExtension = getFileExtension(originalFilename);
-      String uniqueFilename = UUID.randomUUID().toString() + fileExtension;
-
-      // Save the file
-      Path filePath = directory.resolve(uniqueFilename);
-      Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-      // Return the URL
-      // return String.format("%s/%s/%s", baseUrl, directoryPath, uniqueFilename);
-      return String.format("%s/%s", directoryPath, uniqueFilename);
+      Cloudinary cloudinary = new Cloudinary(cloudinaryUrl);
+      Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
+          ObjectUtils.asMap("folder", "freeshelf/spaces/" + spaceId, "resource_type", "image"));
+      return (String) uploadResult.get("secure_url");
     } catch (IOException e) {
-      throw new RuntimeException("Failed to store file", e);
+      throw new RuntimeException("Failed to upload image to Cloudinary", e);
     }
   }
 
@@ -159,6 +130,4 @@ public class ImageServiceImpl implements ImageService {
     }
     return filename.substring(dotIndex);
   }
-
-
 }

@@ -111,7 +111,8 @@ public class StorageSpaceController implements StorageSpaceControllerV1Api {
 
   @Override
   public ResponseEntity<StorageSpaceResponse> getFeaturedStorageSpaces() throws Exception {
-    StorageSpaceResponse response = mapper.toStorageSpaceResponse(apiResponseBuilder.buildSuccessApiResponse(Constants.GET_STORAGE_SPACE_SUCCESS_MESSAGE));
+    StorageSpaceResponse response = mapper.toStorageSpaceResponse(
+        apiResponseBuilder.buildSuccessApiResponse(Constants.GET_STORAGE_SPACE_SUCCESS_MESSAGE));
     response.data(mapper.toStorageSpaceSet(storageSpaceService.handleGetFeaturedSpaces()));
     return new ResponseEntity<>(response, HttpStatus.OK);
   }

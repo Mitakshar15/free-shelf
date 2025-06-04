@@ -32,7 +32,7 @@ public class BookingServiceImpl implements BookingService {
   private final NotificationService notificationService;
 
   @Override
-  @PreAuthorize("hasRole('ROLE_RENTER')")
+  @PreAuthorize("hasRole('RENTER')")
   @Transactional
   public void handleBookStorageSpace(User renter, BookingRequest bookingRequest) {
 
@@ -59,7 +59,7 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
-  @PreAuthorize("hasRole('ROLE_HOST')")
+  @PreAuthorize("hasAnyRole('HOST')")
   public Set<Booking> handleGetStorageSpaceBookings(Long spaceId, User host) {
     StorageSpace space = storageSpaceRepository.findById(spaceId)
         .orElseThrow(() -> new RuntimeException("Space not found"));
@@ -67,7 +67,7 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
-  @PreAuthorize("hasRole('ROLE_HOST')")
+  @PreAuthorize("hasAnyRole('HOST')")
   @Transactional
   public void handleRejectBooking(Long bookingId, Long userId) {
     Booking booking = bookingRepository.findById(bookingId)
@@ -86,7 +86,7 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
-  @PreAuthorize("hasRole('ROLE_HOST')")
+  @PreAuthorize("hasAnyRole('HOST')")
   @Transactional
   public void handleAcceptBooking(Long bookingId, Long userId) {
     Booking booking = bookingRepository.findById(bookingId)
@@ -106,7 +106,7 @@ public class BookingServiceImpl implements BookingService {
 
 
   @Override
-  @PreAuthorize("hasRole('ROLE_RENTER')")
+  @PreAuthorize("hasAnyRole('RENTER')")
   @Transactional
   public void handleCancelBooking(Long bookingId, Long userId) {
     Booking booking = bookingRepository.findById(bookingId)

@@ -269,3 +269,30 @@ paths:
           description: Space  not found
 
 
+  /v1/storagespace/featured:
+    get:
+      tags:
+        - storage space controller v1
+      summary: Get Featured Storage Spaces
+      description: Get Featured Storage Spaces
+      operationId: getFeaturedStorageSpaces
+      responses:
+        '201':
+          description: "Get Featured Storage Spaces Success"
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/StorageSpaceResponse'
+        '422':
+          description: "Get Featured Storage Spaces Request is valid but the service was not able to process it ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+        '400':
+          description: "Validations failed for request arguments ..."
+          content:
+            application/json:
+              schema:
+                $ref: './FreeShelfApiComponents.yaml#/components/schemas/FreeShelfApiBaseApiResponse'
+

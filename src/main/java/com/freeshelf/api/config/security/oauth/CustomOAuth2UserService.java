@@ -15,7 +15,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -54,6 +56,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         user.setProviderId(userInfo.getId());
         user = userRepository.save(user);
       }
+      user.setLastLoginAt(LocalDateTime.now());
+      userRepository.save(user);
     } else {
       user = registerNewUser(oAuth2UserRequest, userInfo);
     }
@@ -77,7 +81,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     user.setAccountVerified(true);
     user.setFirstName(userInfo.getName());
     user.setStatus(UserStatus.ACTIVE);
-    user.setRole(UserRole.HOST);
+    // Initial Role is set as Host by Default, later implement a service to choose roles for the
+    // user
+    user.setRoles(Set.of(UserRole.UNASSIGNED));
     UserProfile profile = new UserProfile();
     profile.setUser(user);
     profile.setProfileImageUrl(userInfo.getImageUrl());

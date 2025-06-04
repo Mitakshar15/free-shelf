@@ -16,6 +16,7 @@ import com.freeshelf.api.utils.enums.UserRole;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.producr.api.dtos.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,10 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 
 @Service
 @RequiredArgsConstructor
@@ -79,18 +79,21 @@ public class UserServiceImpl implements UserService {
 
     user.setFirstName(signUpRequest.getFirstName());
     user.setLastName(signUpRequest.getLastName());
-    switch (signUpRequest.getRole()) {
-      case RENTER:
-        user.setRole(UserRole.RENTER);
-        break;
-      case HOST:
-        user.setRole(UserRole.HOST);
-        break;
-      default:
-        user.setRole(UserRole.ADMIN);
-        break;
-    }
-
+    Set<UserRole> roles = new HashSet<>();
+    signUpRequest.getRole().stream().forEach(role -> {
+      switch (role) {
+        case RENTER:
+          roles.add(UserRole.RENTER);
+          break;
+        case HOST:
+          roles.add(UserRole.HOST);
+          break;
+        default:
+          roles.add(UserRole.HOST);
+          break;
+      }
+    });
+    user.setRoles(roles);
     user.setUserName(signUpRequest.getUsername());
     user.setEmail(signUpRequest.getEmail());
     // For demo purposes, set account as verified In production, you would implement email
@@ -198,5 +201,22 @@ public class UserServiceImpl implements UserService {
   @Override
   public Set<@Valid Address> handleGetAddresses(User user) {
     return addressRepository.findAllByUserProfile(user.getProfile());
+  }
+
+  @Override
+  @PreAuthorize("hasRole('ROLE_UNASSIGNED')")
+  public void assignUserRole(User user, List<String> roles) {
+    user.getRoles().clear();
+    roles.forEach(role -> {
+      switch (role) {
+        case "RENTER":
+          user.getRoles().add(UserRole.RENTER);
+          break;
+        case "HOST":
+          user.getRoles().add(UserRole.HOST);
+          break;
+      }
+    });
+    userRepository.save(user);
   }
 }

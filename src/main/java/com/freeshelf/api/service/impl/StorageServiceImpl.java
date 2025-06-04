@@ -30,7 +30,7 @@ public class StorageServiceImpl implements StorageSpaceService {
 
 
   @Override
-  @PreAuthorize("hasRole('ROLE_HOST')")
+  @PreAuthorize("hasRole('HOST')")
   public StorageSpace handleCreateStorageSpace(User user,
       CreateStorageSpaceRequest createStorageSpaceRequest) {
     // TODO: Handle The Storage Space Image Upload Functionality to actually Upload Images To Server
@@ -77,5 +77,10 @@ public class StorageServiceImpl implements StorageSpaceService {
         .orElseThrow(() -> new RuntimeException("Storage space not found with id: " + spaceId));
     space.setStatus(SpaceStatus.ACTIVE);
     storageSpaceRepository.save(space);
+  }
+
+  @Override
+  public Set<StorageSpace> handleGetFeaturedSpaces() {
+    return  storageSpaceRepository.getFeaturedSpaces();
   }
 }

@@ -49,7 +49,8 @@ public class SecurityConfig {
             CorsConfiguration cfg = new CorsConfiguration();
             cfg.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:4000",
                 "http://localhost:4202", "https://mitakshar-ecom.vercel.app/",
-                "https://free-shelf-app.vercel.app"));
+                "https://free-shelf-app.vercel.app",
+                "https://free-shelf-app-git-stg-mitakshar15s-projects.vercel.app"));
             cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
             cfg.setAllowCredentials(true);
             cfg.setAllowedHeaders(Collections.singletonList("*"));

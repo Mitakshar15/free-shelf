@@ -48,7 +48,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     // Set token in HTTP-only cookie
     Cookie tokenCookie = new Cookie("free-shelf-token", token);
-    //tokenCookie.setHttpOnly(true);
+    // tokenCookie.setHttpOnly(true);
     tokenCookie.setSecure(true); // for HTTPS
     tokenCookie.setPath("/");
     tokenCookie.setMaxAge(7 * 24 * 60 * 60 * 1000);

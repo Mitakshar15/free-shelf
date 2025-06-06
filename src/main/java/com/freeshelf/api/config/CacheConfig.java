@@ -29,8 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@EnableRedisRepositories(
-    enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
+@EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.OFF)
 @RequiredArgsConstructor
 public class CacheConfig {
 
@@ -86,4 +85,7 @@ public class CacheConfig {
 
     return mapper;
   }
+
+
+
 }

@@ -119,15 +119,4 @@ public class ImageServiceImpl implements ImageService {
     return contentType != null && (contentType.equals("image/jpeg")
         || contentType.equals("image/jpg") || contentType.equals("image/png"));
   }
-
-  private String getFileExtension(String filename) {
-    if (filename == null) {
-      return ".jpg"; // Default extension
-    }
-    int dotIndex = filename.lastIndexOf('.');
-    if (dotIndex < 0) {
-      return ".jpg"; // Default extension if no extension found
-    }
-    return filename.substring(dotIndex);
-  }
 }

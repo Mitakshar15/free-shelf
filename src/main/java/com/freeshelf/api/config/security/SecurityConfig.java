@@ -42,25 +42,20 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.csrf(AbstractHttpConfigurer::disable)
-        .cors(cors -> cors.configurationSource(new CorsConfigurationSource() {
-          @Override
-          public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-            CorsConfiguration cfg = new CorsConfiguration();
-            cfg.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:4000",
-                "http://localhost:4202", "https://mitakshar-ecom.vercel.app/",
-                "https://free-shelf-app.vercel.app",
-                "https://free-shelf-app-git-stg-mitakshar15s-projects.vercel.app"));
-            cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-            cfg.setAllowCredentials(true);
-            cfg.setAllowedHeaders(Collections.singletonList("*"));
-            cfg.setExposedHeaders(List.of("Authorization"));
-            cfg.setMaxAge(3600L);
-            return cfg;
-          }
-        }))
-        .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**", "/oauth2/**", "/**")
-            .permitAll().anyRequest().authenticated())
+    http.csrf(AbstractHttpConfigurer::disable).cors(cors -> cors.configurationSource(request -> {
+      CorsConfiguration cfg = new CorsConfiguration();
+      cfg.setAllowedOrigins(
+          Arrays.asList("http://localhost:3000", "http://localhost:4000", "http://localhost:4202",
+              "https://mitakshar-ecom.vercel.app/", "https://free-shelf-app.vercel.app",
+              "https://free-shelf-app-git-stg-mitakshar15s-projects.vercel.app"));
+      cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+      cfg.setAllowCredentials(true);
+      cfg.setAllowedHeaders(Collections.singletonList("*"));
+      cfg.setExposedHeaders(List.of("Authorization"));
+      cfg.setMaxAge(3600L);
+      return cfg;
+    })).authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**", "/oauth2/**", "/**")
+        .permitAll().anyRequest().authenticated())
         .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

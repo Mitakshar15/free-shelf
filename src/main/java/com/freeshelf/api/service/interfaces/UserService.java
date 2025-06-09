@@ -4,7 +4,9 @@ import com.freeshelf.api.data.domain.user.Address;
 import com.freeshelf.api.data.domain.user.User;
 import jakarta.validation.Valid;
 import org.producr.api.dtos.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -26,4 +28,6 @@ public interface UserService {
   Set<@Valid Address> handleGetAddresses(User user);
 
   void assignUserRole(User user, List<String> roles);
+
+  void handleUpdateProfilePicture(User user, MultipartFile image) throws IOException;
 }

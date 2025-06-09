@@ -12,6 +12,7 @@ import org.producr.api.dtos.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -88,6 +89,14 @@ public class UserController implements UserControllerV1Api {
         apiResponseBuilder.buildSuccessApiResponse(Constants.ASSIGN_ROLE_SUCCESS_MESSAGE));
     User user = userService.handleGetUserProfile(authorization);
     userService.assignUserRole(user, roles);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<FreeShelfApiBaseApiResponse> updateProfilePic(String authorization, MultipartFile image) throws Exception {
+    FreeShelfApiBaseApiResponse response = mapper.toUserMgmtBaseApiResponse(apiResponseBuilder.buildSuccessApiResponse(Constants.UPDATE_USER_PROFILE_SUCCESS_MESSAGE));
+    User user = userService.handleGetUserProfile(authorization);
+    userService.handleUpdateProfilePicture(user,image);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 }

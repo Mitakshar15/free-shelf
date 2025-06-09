@@ -5,6 +5,7 @@ import com.freeshelf.api.data.domain.user.User;
 import org.apache.coyote.BadRequestException;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface ImageService {
@@ -13,4 +14,6 @@ public interface ImageService {
       List<String> captions) throws BadRequestException;
 
   SpaceImage setImageAsPrimary(Long spaceId, Long imageId);
+
+  String uploadProfilePicture(User user, MultipartFile file) throws IOException;
 }

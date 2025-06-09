@@ -125,8 +125,6 @@ components:
           type: string
         bio:
           type: string
-        profileImageUrl:
-          type: string
 
     UserProfileResponse:
       type: object

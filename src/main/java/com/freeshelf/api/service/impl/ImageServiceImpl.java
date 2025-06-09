@@ -86,6 +86,7 @@ public class ImageServiceImpl implements ImageService {
   }
 
 
+
   @Transactional
   @Override
   public SpaceImage setImageAsPrimary(Long spaceId, Long imageId) {
@@ -113,6 +114,17 @@ public class ImageServiceImpl implements ImageService {
       throw new RuntimeException("Failed to upload image to Cloudinary", e);
     }
   }
+
+  public String uploadProfilePicture(User user, MultipartFile file) throws IOException {
+    if (file == null || file.isEmpty()) {
+      throw new BadRequestException("No files provided for upload");
+    }
+    Cloudinary cloudinary = new Cloudinary(cloudinaryUrl);
+    Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("folder",
+        "freeshelf/profileImage/users/" + user.getUserName(), "resource_type", "image"));
+    return (String) uploadResult.get("secure_url");
+  }
+
 
   private boolean isValidImageType(MultipartFile file) {
     String contentType = file.getContentType();

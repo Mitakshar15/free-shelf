@@ -10,6 +10,7 @@ import com.freeshelf.api.data.repository.AddressRepository;
 import com.freeshelf.api.data.repository.UserProfileRepository;
 import com.freeshelf.api.data.repository.UserRepository;
 import com.freeshelf.api.mapper.UserMgmtMapper;
+import com.freeshelf.api.service.interfaces.ImageService;
 import com.freeshelf.api.service.interfaces.UserService;
 import com.freeshelf.api.utils.enums.AuthProvider;
 import com.freeshelf.api.utils.enums.UserRole;
@@ -24,7 +25,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -42,6 +45,7 @@ public class UserServiceImpl implements UserService {
   private final PasswordEncoder passwordEncoder;
   private final UserProfileRepository userProfileRepository;
   private final AddressRepository addressRepository;
+  private final ImageService imageService;
 
   @Override
   public AuthResponseDto handleSignIn(SignInRequest signInRequest) {
@@ -129,7 +133,6 @@ public class UserServiceImpl implements UserService {
     user.setFirstName(updateProfileRequest.getFirstName());
     user.setLastName(updateProfileRequest.getLastName());
     user.getProfile().setBio(updateProfileRequest.getBio());
-    user.getProfile().setProfileImageUrl(updateProfileRequest.getProfileImageUrl());
     userRepository.save(user);
   }
 
@@ -218,5 +221,11 @@ public class UserServiceImpl implements UserService {
       }
     });
     userRepository.save(user);
+  }
+
+  @Override
+  public void handleUpdateProfilePicture(User user, MultipartFile image) throws IOException {
+     user.getProfile().setProfileImageUrl(imageService.uploadProfilePicture(user, image));
+     userRepository.save(user);
   }
 }
